@@ -1,4 +1,4 @@
-package com.example.appen.UI.User
+package com.example.appen.ui.User
 
 import android.os.Bundle
 import android.view.LayoutInflater
