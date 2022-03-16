@@ -39,7 +39,4 @@ class MapFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
-    // Test branch
 }
