@@ -50,4 +50,6 @@ dependencies {
 
     //MAPBOX
     implementation 'com.mapbox.maps:android:10.3.0'
+        //PermissionsManager
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-core:3.1.0'
 }
