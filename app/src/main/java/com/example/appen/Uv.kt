@@ -21,15 +21,15 @@ data class Units(
     val probability_of_precipitation: String,
     val probability_of_thunder: String,
     val relative_humidity: String,
-    val ultraviolet_index_clear_sky_max: String,
+    val ultraviolet_index_clear_sky: String,
     val wind_from_direction: String,
     val wind_speed: String,
     val wind_speed_of_gust: String
 )
 
 data class Timesery(
-    val `data`: Data,
-    val time: String
+    val time: String,
+    val data: Data
 )
 
 data class Summary(
@@ -42,17 +42,17 @@ data class Properties(
 )
 
 data class Next12Hours(
-    val details: DetailsX,
+    val details: Details12,
     val summary: Summary
 )
 
 data class Next6Hours(
-    val details: DetailsXXX,
+    val details: Details6,
     val summary: Summary
 )
 
 data class Next1Hours(
-    val details: DetailsXX,
+    val details: Details1,
     val summary: Summary
 )
 
@@ -69,42 +69,33 @@ data class Geometry(
     val coordinates: List<Double>,
     val type: String
 )
-data class DetailsXXX(
+data class Details6(
     val air_temperature_max: Double,
     val air_temperature_min: Double,
     val precipitation_amount: Double,
     val precipitation_amount_max: Double,
     val precipitation_amount_min: Double,
     val probability_of_precipitation: Double,
-    val probability_of_thunder: Double,
-    val ultraviolet_index_clear_sky_max: Int
 )
 
-data class DetailsXX(
-    val air_temperature_max: Double,
-    val air_temperature_min: Double,
+data class Details1(
     val precipitation_amount: Double,
     val precipitation_amount_max: Double,
     val precipitation_amount_min: Double,
     val probability_of_precipitation: Double,
     val probability_of_thunder: Double,
-    val ultraviolet_index_clear_sky_max: Int
 )
 
-data class DetailsX(
-    val air_temperature_max: Double,
-    val air_temperature_min: Double,
-    val precipitation_amount: Double,
-    val precipitation_amount_max: Double,
-    val precipitation_amount_min: Double,
-    val probability_of_precipitation: Double,
-    val probability_of_thunder: Double,
-    val ultraviolet_index_clear_sky_max: Int
+data class Details12(
+    val probability_of_precipitation: Double
+
 )
 
 data class Details(
     val air_pressure_at_sea_level: Double,
     val air_temperature: Double,
+    val air_temperature_percentile_10: Double,
+    val air_temperature_percentile_90: Double,
     val cloud_area_fraction: Double,
     val cloud_area_fraction_high: Double,
     val cloud_area_fraction_low: Double,
@@ -112,9 +103,12 @@ data class Details(
     val dew_point_temperature: Double,
     val fog_area_fraction: Double,
     val relative_humidity: Double,
+    val ultraviolet_index_clear_sky: Double,
     val wind_from_direction: Double,
     val wind_speed: Double,
-    val wind_speed_of_gust: Double
+    val wind_speed_of_gust: Double,
+    val wind_speed_percentile_10: Double,
+    val wind_speed_percentile_90: Double
 )
 
 data class Data(

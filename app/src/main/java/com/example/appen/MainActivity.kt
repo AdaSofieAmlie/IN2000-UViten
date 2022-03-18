@@ -2,6 +2,8 @@ package com.example.appen
 
 import Pos
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -16,14 +18,12 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    val dataSource = DatasourceMet()
 
-    val baseUrl: String = "https://api.met.no/weatherapi/locationforecast/2.0/complete.json?"
-    var fullUrl: String = ""
+    private val viewModelMet: ViewModelMet by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -42,16 +42,24 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val nyPos = Pos(0, 60.391262, 5.322054)
-        setUrl(nyPos)
-        CoroutineScope(Dispatchers.IO).launch {
-            dataSource.getJson(fullUrl)
+        //UV
+        viewModelMet.getUvPaaSted().observe(this){
+            Log.d("Fra main activity", it.toString())
+            if (it != null){
+                Log.d("Timeseries",
+                    it.properties.timeseries[4].toString()
+                )
+                Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
+            }
+            for (i in it.properties.timeseries){
+                Log.d("tag", i.time)
+            }
+            Log.d("Noe", it.properties.timeseries[0].time)
+            Log.d("Meta", it.properties.meta.updated_at)
+
         }
 
-
     }
 
-    fun setUrl(pos: Pos) {
-        fullUrl = baseUrl.plus("altitude=".plus(pos.alt.toString())).plus("&lat=").plus(pos.lat.toString()).plus("&lon=").plus(pos.lon.toString())
-    }
+
 }

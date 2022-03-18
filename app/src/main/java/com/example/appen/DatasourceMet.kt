@@ -15,8 +15,6 @@ import io.ktor.client.request.*
 class DatasourceMet {
 
     suspend fun getJson(url: String): Uv? {
-        //var tilObjekt: Uv
-
 
         try {
             val client = HttpClient() {
@@ -25,12 +23,7 @@ class DatasourceMet {
                     agent = "uio.no snorre@wenaas.org"
                 }
             }
-
             val returnObjekt: Uv = client.get(url)
-            //val returnString = Fuel.get(url).awaitString()
-            //tilObjekt = gson.fromJson(returnString, Uv::class.java)
-            //Log.d("hei", tilObjekt.toString())
-            Log.d("heiString", returnObjekt.toString())
             return returnObjekt
         }
         catch (exception: Exception) {
