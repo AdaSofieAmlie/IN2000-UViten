@@ -1,6 +1,7 @@
 package com.example.appen
 
 import Uv
+import android.net.http.HttpResponseCache.install
 import android.util.Log
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.coroutines.awaitString
@@ -12,8 +13,6 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 
 class DatasourceMet {
-
-    private val gson = Gson()
 
     suspend fun getJson(url: String): Uv? {
         //var tilObjekt: Uv

@@ -32,14 +32,6 @@ data class Timesery(
     val time: String
 )
 
-data class SummaryXX(
-    val symbol_code: String
-)
-
-data class SummaryX(
-    val symbol_code: String
-)
-
 data class Summary(
     val symbol_code: String
 )
@@ -56,12 +48,12 @@ data class Next12Hours(
 
 data class Next6Hours(
     val details: DetailsXXX,
-    val summary: SummaryXX
+    val summary: Summary
 )
 
 data class Next1Hours(
     val details: DetailsXX,
-    val summary: SummaryX
+    val summary: Summary
 )
 
 data class Meta(
