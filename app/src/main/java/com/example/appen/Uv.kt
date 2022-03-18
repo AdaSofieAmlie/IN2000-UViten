@@ -131,3 +131,9 @@ data class Data(
     val next_1_hours: Next1Hours,
     val next_6_hours: Next6Hours
 )
+
+data class Pos(
+    val alt: Int,
+    val lat: Double,
+    val lon: Double
+)
