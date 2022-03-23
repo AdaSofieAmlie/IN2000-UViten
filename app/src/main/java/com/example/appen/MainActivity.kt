@@ -1,30 +1,63 @@
 package com.example.appen
 
-import Pos
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.viewModels
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.appen.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
+
+
+private const val PERMISSION_REQUEST = 10
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    val loc = Location(this)
 
     private val viewModelMet: ViewModelMet by viewModels()
 
+    lateinit var locationManager: LocationManager
+    private var hasGps = false
+    private var hasNetwork = false
+    private var locationGps: Location? = null
+    private var locationNetwork: Location? = null
 
+    private var inst: MainActivity? = null
+
+    //TEST
+    lateinit var locationMan: LocationManager
+    //TEST
+
+    private var permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     override fun onCreate(savedInstanceState: Bundle?) {
+        locationMan = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         super.onCreate(savedInstanceState)
-
+        inst = this
+////////////////////////////
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkPermission(permissions)) {
+                loc.enableView()
+            } else {
+                requestPermissions(permissions, PERMISSION_REQUEST)
+            }
+        } else {
+            loc.enableView()
+        }
+//////////////////////
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -44,21 +77,53 @@ class MainActivity : AppCompatActivity() {
 
         //UV
         viewModelMet.getUvPaaSted().observe(this){
-            Log.d("Fra main activity", it.toString())
+            //Log.d("Fra main activity", it.toString())
             if (it != null){
-                Log.d("Timeseries",
-                    it.properties.timeseries[4].toString()
-                )
-                Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
+                //Log.d("Timeseries",
+                    //it.properties.timeseries[4].toString()
+                //)
+                //Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
             }
             for (i in it.properties.timeseries){
-                Log.d("tag", i.time)
+                //Log.d("tag", i.time)
             }
-            Log.d("Noe", it.properties.timeseries[0].time)
-            Log.d("Meta", it.properties.meta.updated_at)
+            //Log.d("Noe", it.properties.timeseries[0].time)
+            //Log.d("Meta", it.properties.meta.updated_at)
+        }
+    }
+
+    ///////////////////////////////////
+    private fun checkPermission(permissionArray: Array<String>): Boolean {
+        var allSuccess = true
+        for (i in permissionArray.indices) {
+            if (checkCallingOrSelfPermission(permissionArray[i]) == PackageManager.PERMISSION_DENIED)
+                allSuccess = false
+        }
+        return allSuccess
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST) {
+            var allSuccess = true
+            for (i in permissions.indices) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    allSuccess = false
+                    val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
+                    if (requestAgain) {
+                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Go to settings and enable the permission", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            if (allSuccess)
+                loc.enableView()
 
         }
-
+    }
+    fun startAct() {
+        return startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
     }
 
 

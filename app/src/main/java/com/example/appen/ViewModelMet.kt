@@ -38,6 +38,6 @@ class ViewModelMet: ViewModel() {
 
     private fun setUrl(pos: Pos) {
         fullUrl = baseUrl.plus("altitude=".plus(pos.alt.toString())).plus("&lat=").plus(pos.lat.toString()).plus("&lon=").plus(pos.lon.toString())
-        Log.d("LINK", fullUrl)
+        //Log.d("LINK", fullUrl)
     }
 }
