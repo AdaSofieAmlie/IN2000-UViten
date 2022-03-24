@@ -58,13 +58,6 @@ class SimpleDisplayFragment : Fragment() {
     ): View {
         return inflater.inflate(R.layout.simple_display_home, container, false)
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-            val textView: TextView = view.findViewById(android.R.id.text1)
-            textView.text = getInt(ARG_OBJECT).toString()
-        }
-    }
 }
 
 class AdvancedDisplayFragment : Fragment() {
@@ -75,13 +68,6 @@ class AdvancedDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.advanced_display_home, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-            val textView: TextView = view.findViewById(android.R.id.text1)
-            textView.text = getInt(ARG_OBJECT).toString()
-        }
     }
 }
 
