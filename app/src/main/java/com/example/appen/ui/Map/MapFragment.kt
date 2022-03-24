@@ -84,15 +84,15 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        /*val textView: TextView = binding.textDashboard
+        val textView: TextView = binding.textDashboard
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        */
 
 
-        mapView //= MapView(this)
-        //mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
+
+        mapView = binding.mapView
+        mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
 
         //Test med premissions
         mapView // Ikke mulig med "setContentView" i fragments
