@@ -47,7 +47,7 @@ class Location(act: MainActivity){
                         LocationListener {
                         override fun onLocationChanged(p0: Location) {
                             locationGps = p0
-
+                            /*
                             Log.d(
                                 "CodeAndroidLocation",
                                 " GPS Lat : " + locationGps!!.latitude
@@ -60,9 +60,10 @@ class Location(act: MainActivity){
                                 "CodeAndroidLocation",
                                 " GPS alt : " + locationGps!!.altitude
                             )
-                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat())
+                            */
+                            val uv: Float = main.getUvByTime()
+                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat(), uv)
                             val viewMet = main.getMet()
-
                             viewMet.updatePositionMet(position)
 
                         }

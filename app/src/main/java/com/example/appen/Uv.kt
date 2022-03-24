@@ -121,5 +121,6 @@ data class Data(
 data class Pos(
     val alt: Int = 0,
     val lat: Float = 0.0F,
-    val lon: Float = 0.0F
+    val lon: Float = 0.0F,
+    val uvIndex: Float = 0.0F
 )
