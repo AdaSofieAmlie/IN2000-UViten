@@ -12,11 +12,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appen.R
 import com.example.appen.databinding.FragmentMapBinding
+import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.example.appen.ui.Map.LocationPermissionHelper
+import com.mapbox.mapboxsdk.Mapbox.getApplicationContext
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
@@ -42,9 +45,11 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
 
         //User location
     private lateinit var mapView: MapView
+    private lateinit var locationPermissionHelper: LocationPermissionHelper
 
 
     lateinit var permissionsManager: PermissionsManager
+    lateinit var permissionsListener: PermissionsListener
 
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
@@ -65,13 +70,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
 
         override fun onMoveEnd(detector: MoveGestureDetector) {}
     }
-    /*
-    var map: MapboxMap? = null
-    var permissionsManager: PermissionsManager? = null
-    var locationEngine: LocationEngine? = null
-    var locationLayerPlugin: LocationLayer? = null
-    var originLocation: Location? = null
-    */
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,24 +84,27 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
+        /*val textView: TextView = binding.textDashboard
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        //
-        mapView = binding.mapView
-        mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
+        */
+
+
+        mapView //= MapView(this)
+        //mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
 
         //Test med premissions
-        setContentView(mapView)
-        permissionsManager = PermissionsManager(WeakReference(this)) //Premission Listner
-        permissionsManager.checkPermissions {
+        mapView // Ikke mulig med "setContentView" i fragments
+        locationPermissionHelper = LocationPermissionHelper(WeakReference(activity))
+        locationPermissionHelper.checkPermissions {
             onMapReady()
         }
 
 
         return root
     }
+
     private fun onMapReady() {
         mapView.getMapboxMap().setCamera(
             CameraOptions.Builder()
@@ -124,13 +126,17 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         locationComponentPlugin.updateSettings {
             this.enabled = true
             LocationPuck2D(
+                topImage = AppCompatResources.getDrawable(
+                    getApplicationContext(),
+                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_icon
+                ),
                 bearingImage = AppCompatResources.getDrawable(
-                    this@MapFragment,
-                    R.drawable.mapbox_user_puck_icon,
+                    getApplicationContext(),
+                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_bearing_icon,
                 ),
                 shadowImage = AppCompatResources.getDrawable(
-                    this@MapFragment,
-                    R.drawable.mapbox_user_icon_shadow,
+                    getApplicationContext(),
+                    com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_stroke_icon,
                 ),
                 scaleExpression = interpolate {
                     linear()
@@ -151,7 +157,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     }
 
     private fun onCameraTrackingDismissed() {
-        Toast.makeText(this, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
         mapView.location
             .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.location
@@ -159,14 +165,12 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        permissions.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
+                                            grantResults: IntArray) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
+
+    //Kan hende vi må bruke onPermissionResult
 
 
 
