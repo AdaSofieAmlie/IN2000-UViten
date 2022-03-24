@@ -2,18 +2,11 @@ package com.example.appen
 
 import Pos
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.Context.LOCATION_SERVICE
-import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.ContextCompat.startActivity
 
 
 
@@ -22,7 +15,6 @@ class Location(act: MainActivity){
 
 
     val main = act
-    //val viewModel = viewModelInn
 
 
     lateinit var locationManager: LocationManager
@@ -34,7 +26,6 @@ class Location(act: MainActivity){
 
     fun enableView() {
         getLocation()
-        //Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -56,9 +47,6 @@ class Location(act: MainActivity){
                         LocationListener {
                         override fun onLocationChanged(p0: Location) {
                             locationGps = p0
-                            //tv_result.append("\nGPS ")
-                            //tv_result.append("\nLatitude : " + locationGps!!.latitude)
-                            //tv_result.append("\nLongitude : " + locationGps!!.longitude)
 
                             Log.d(
                                 "CodeAndroidLocation",
@@ -87,8 +75,6 @@ class Location(act: MainActivity){
                         ) {
 
                         }
-
-
                     })
 
                 val localGpsLocation =
@@ -107,9 +93,6 @@ class Location(act: MainActivity){
                         override fun onLocationChanged(location: Location) {
                             if (location != null) {
                                 locationNetwork = location
-                                //tv_result.append("\nNetwork ")
-                                //tv_result.append("\nLatitude : " + locationNetwork!!.latitude)
-                                //tv_result.append("\nLongitude : " + locationNetwork!!.longitude)
                                 Log.d(
                                     "CodeAndroidLocation",
                                     " Network Latitude : " + locationNetwork!!.latitude
@@ -140,9 +123,6 @@ class Location(act: MainActivity){
 
             if (locationGps != null && locationNetwork != null) {
                 if (locationGps!!.accuracy > locationNetwork!!.accuracy) {
-                    //tv_result.append("\nNetwork ")
-                    //tv_result.append("\nLatitude : " + locationNetwork!!.latitude)
-                    //tv_result.append("\nLongitude : " + locationNetwork!!.longitude)
                     Log.d(
                         "CodeAndroidLocation",
                         " Network Latitude : " + locationNetwork!!.latitude
@@ -152,14 +132,10 @@ class Location(act: MainActivity){
                         " Network Longitude : " + locationNetwork!!.longitude
                     )
                 } else {
-                    //tv_result.append("\nGPS ")
-                    //tv_result.append("\nLatitude : " + locationGps!!.latitude)
-                    //tv_result.append("\nLongitude : " + locationGps!!.longitude)
                     Log.d("CodeAndroidLocation", " GPS Latitude : " + locationGps!!.latitude)
                     Log.d("CodeAndroidLocation", " GPS Longitude : " + locationGps!!.longitude)
                 }
             }
-
         } else {
             main.startAct()
         }

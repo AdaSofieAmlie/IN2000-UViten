@@ -41,8 +41,6 @@ class ViewModelMet: ViewModel() {
     }
 
     private fun loadUv() {
-        // Do an asynchronous operation to fetch users.
-        //val nyPos = Pos(0, 60.391262, 5.322054)
         //Lytter ettter endring i POS
         setUrl(pos)
         CoroutineScope(Dispatchers.IO).launch {
