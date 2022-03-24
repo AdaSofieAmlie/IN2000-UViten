@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.appen.databinding.ActivityMainBinding
+
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -26,15 +28,11 @@ private const val PERMISSION_REQUEST = 10
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    val loc = Location(this)
 
     private val viewModelMet: ViewModelMet by viewModels()
 
-    lateinit var locationManager: LocationManager
-    private var hasGps = false
-    private var hasNetwork = false
-    private var locationGps: Location? = null
-    private var locationNetwork: Location? = null
+    private val loc = Location(this)
+
 
     private var inst: MainActivity? = null
 
@@ -47,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         locationMan = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         super.onCreate(savedInstanceState)
         inst = this
+
 ////////////////////////////
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkPermission(permissions)) {
@@ -76,13 +75,13 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         //UV
-        viewModelMet.getUvPaaSted().observe(this){
+        viewModelMet.getUvPaaSted(loc,this).observe(this){
             //Log.d("Fra main activity", it.toString())
             if (it != null){
-                //Log.d("Timeseries",
-                    //it.properties.timeseries[4].toString()
-                //)
-                //Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
+                Log.d("Timeseries",
+                    it.properties.timeseries[4].toString()
+                )
+                Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
             }
             for (i in it.properties.timeseries){
                 //Log.d("tag", i.time)
@@ -124,6 +123,10 @@ class MainActivity : AppCompatActivity() {
     }
     fun startAct() {
         return startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+    }
+
+    fun getMet(): ViewModelMet {
+        return viewModelMet
     }
 
 

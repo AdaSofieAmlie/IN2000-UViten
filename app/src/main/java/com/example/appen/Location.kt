@@ -1,5 +1,6 @@
 package com.example.appen
 
+import Pos
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -15,22 +16,27 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
 
 
+
 class Location(act: MainActivity){
 
 
 
     val main = act
+    //val viewModel = viewModelInn
+
 
     lateinit var locationManager: LocationManager
     private var hasGps = false
     private var hasNetwork = false
     private var locationGps: Location? = null
     private var locationNetwork: Location? = null
+    var position: Pos = Pos(0,0.0F,0.0F)
 
     fun enableView() {
         getLocation()
         //Toast.makeText(this, "Done", Toast.LENGTH_SHORT).show()
     }
+
 
     @SuppressLint("MissingPermission")
     private fun getLocation() {
@@ -53,14 +59,23 @@ class Location(act: MainActivity){
                             //tv_result.append("\nGPS ")
                             //tv_result.append("\nLatitude : " + locationGps!!.latitude)
                             //tv_result.append("\nLongitude : " + locationGps!!.longitude)
+
                             Log.d(
                                 "CodeAndroidLocation",
-                                " GPS Latitude : " + locationGps!!.latitude
+                                " GPS Lat : " + locationGps!!.latitude
                             )
                             Log.d(
                                 "CodeAndroidLocation",
-                                " GPS Longitude : " + locationGps!!.longitude
+                                " GPS Long : " + locationGps!!.longitude
                             )
+                            Log.d(
+                                "CodeAndroidLocation",
+                                " GPS alt : " + locationGps!!.altitude
+                            )
+                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat())
+                            val viewMet = main.getMet()
+
+                            viewMet.updatePositionMet(position)
 
                         }
 
