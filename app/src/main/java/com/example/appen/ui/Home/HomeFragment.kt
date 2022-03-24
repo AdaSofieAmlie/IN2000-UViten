@@ -41,8 +41,6 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
     }
 }
 
-private const val ARG_OBJECT = "object"
-
 // Instances of this class are fragments representing a single
 // object in our collection.
 class SimpleDisplayFragment : Fragment() {
