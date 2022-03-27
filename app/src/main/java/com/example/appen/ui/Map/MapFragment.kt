@@ -1,6 +1,5 @@
 package com.example.appen.ui.Map
 
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,16 +10,10 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.appen.R
 import com.example.appen.databinding.FragmentMapBinding
-import com.mapbox.android.core.permissions.PermissionsListener
-import com.mapbox.android.core.permissions.PermissionsManager
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxMap
-import com.example.appen.ui.Map.LocationPermissionHelper
-import com.mapbox.mapboxsdk.Mapbox.getApplicationContext
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.plugin.LocationPuck2D
@@ -31,26 +24,15 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.location
 import java.lang.ref.WeakReference
 
-
-///
-
-
 class MapFragment : Fragment(){ //OnMapReadyCallback
 
     private var _binding: FragmentMapBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
-    //Mapbox
 
+    //Mapbox
         //User location
     private lateinit var mapView: MapView
     private lateinit var locationPermissionHelper: LocationPermissionHelper
-
-
-    lateinit var permissionsManager: PermissionsManager
-    lateinit var permissionsListener: PermissionsListener
 
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
@@ -72,7 +54,6 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         override fun onMoveEnd(detector: MoveGestureDetector) {}
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -90,8 +71,6 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
             textView.text = it
         }
 
-
-
         mapView = binding.mapView
         mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
 
@@ -101,8 +80,6 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         locationPermissionHelper.checkPermissions {
             onMapReady()
         }
-
-
         return root
     }
 
@@ -118,13 +95,14 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
             Log.d(null,"Før locationComp og GestureListener")
             initLocationComponent()
             setupGesturesListener()
-            Log.d(null,"LocationComp og GL kjører")
+            Log.d(null,"LocationCompListener og CameraGestureListener kjører")
         }
     }
     private fun setupGesturesListener() {
         mapView.gestures.addOnMoveListener(onMoveListener)
     }
     private fun initLocationComponent() {
+        mapView.location
         val locationComponentPlugin = mapView.location
         Log.d(null,"Hentet location")
         locationComponentPlugin.updateSettings {
@@ -158,10 +136,11 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
                 }.toJson()
             ).also { this.locationPuck = it }
         }
-        Log.d(null,"Før locComp listeners")
+        Log.d(null,"Location Component listeners")
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-        Log.d(null,"InitLocationComp Ferdig")
+        Log.d(null,"Location Component Ferdig")
+        Log.d(null,"...\nKart location ferdig \n...")
     }
 
     private fun onCameraTrackingDismissed() {
@@ -185,6 +164,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     override fun onStart() {
         super.onStart()
         mapView?.onStart()
+        Log.d(null,"...\nStarter Kart\n...")
     }
 
     override fun onStop() {
@@ -195,6 +175,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     override fun onLowMemory() {
         super.onLowMemory()
         mapView?.onLowMemory()
+        Log.d(null,"Low memory")
     }
 
     override fun onDestroyView() {
@@ -206,6 +187,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         mapView.location
             .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.gestures.removeOnMoveListener(onMoveListener)
+        Log.d(null,"... Destroy kart")
 
     }
 

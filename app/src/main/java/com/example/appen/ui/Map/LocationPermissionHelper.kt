@@ -14,7 +14,7 @@ class LocationPermissionHelper(val activity: WeakReference<Activity>) {
 
     fun checkPermissions(onMapReady: () -> Unit) {
         if (PermissionsManager.areLocationPermissionsGranted(activity.get())) {
-            Log.d(null,"Permissiongranted fra før")
+            Log.d(null,"Location Permission Granted fra før")
             onMapReady()
         } else {
             permissionsManager = PermissionsManager(object : PermissionsListener {
