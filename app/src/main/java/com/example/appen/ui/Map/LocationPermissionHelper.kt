@@ -1,9 +1,11 @@
 package com.example.appen.ui.Map
 
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
+import com.mapbox.base.common.logger.model.Tag
 import java.lang.ref.WeakReference
 
 
@@ -12,6 +14,7 @@ class LocationPermissionHelper(val activity: WeakReference<Activity>) {
 
     fun checkPermissions(onMapReady: () -> Unit) {
         if (PermissionsManager.areLocationPermissionsGranted(activity.get())) {
+            Log.d(null,"Permissiongranted fra før")
             onMapReady()
         } else {
             permissionsManager = PermissionsManager(object : PermissionsListener {
@@ -33,5 +36,11 @@ class LocationPermissionHelper(val activity: WeakReference<Activity>) {
             permissionsManager.requestLocationPermissions(activity.get())
         }
     }
-
+    fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }

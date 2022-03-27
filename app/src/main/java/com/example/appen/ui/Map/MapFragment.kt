@@ -2,6 +2,7 @@ package com.example.appen.ui.Map
 
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -114,8 +115,10 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         mapView.getMapboxMap().loadStyleUri(
             Style.MAPBOX_STREETS
         ) {
+            Log.d(null,"Før locationComp og GestureListener")
             initLocationComponent()
             setupGesturesListener()
+            Log.d(null,"LocationComp og GL kjører")
         }
     }
     private fun setupGesturesListener() {
@@ -123,19 +126,22 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     }
     private fun initLocationComponent() {
         val locationComponentPlugin = mapView.location
+        Log.d(null,"Hentet location")
         locationComponentPlugin.updateSettings {
             this.enabled = true
             LocationPuck2D(
+                //getApplicationContext()
+                //requireContext()
                 topImage = AppCompatResources.getDrawable(
-                    getApplicationContext(),
+                    requireContext(),
                     com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_icon
                 ),
                 bearingImage = AppCompatResources.getDrawable(
-                    getApplicationContext(),
+                    requireContext(),
                     com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_bearing_icon,
                 ),
                 shadowImage = AppCompatResources.getDrawable(
-                    getApplicationContext(),
+                    requireContext(),
                     com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_stroke_icon,
                 ),
                 scaleExpression = interpolate {
@@ -152,8 +158,10 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
                 }.toJson()
             ).also { this.locationPuck = it }
         }
+        Log.d(null,"Før locComp listeners")
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        Log.d(null,"InitLocationComp Ferdig")
     }
 
     private fun onCameraTrackingDismissed() {
@@ -165,14 +173,14 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
-                                            grantResults: IntArray) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        locationPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
-    //Kan hende vi må bruke onPermissionResult
-
-
 
     override fun onStart() {
         super.onStart()
