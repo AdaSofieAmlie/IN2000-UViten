@@ -74,8 +74,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         mapView = binding.mapView
         mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
 
-        //Test med premissions
-        mapView // Ikke mulig med "setContentView" i fragments
+        mapView
         locationPermissionHelper = LocationPermissionHelper(WeakReference(activity))
         locationPermissionHelper.checkPermissions {
             onMapReady()
@@ -98,9 +97,11 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
             Log.d(null,"LocationCompListener og CameraGestureListener kjører")
         }
     }
+
     private fun setupGesturesListener() {
         mapView.gestures.addOnMoveListener(onMoveListener)
     }
+
     private fun initLocationComponent() {
         mapView.location
         val locationComponentPlugin = mapView.location
