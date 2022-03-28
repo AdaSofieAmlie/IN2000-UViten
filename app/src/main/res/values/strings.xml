@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Appen</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Hjem</string>
+    <string name="title_map">Kart</string>
+    <string name="title_profile">Profil</string>
+    <string name="mapbox_access_token">pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q</string>
 </resources>
