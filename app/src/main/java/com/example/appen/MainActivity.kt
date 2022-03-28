@@ -19,7 +19,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.appen.databinding.ActivityMainBinding
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 private const val PERMISSION_REQUEST = 10
@@ -34,6 +35,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private var inst: MainActivity? = null
+
+    var uvTime: Float = 0.0F
 
     //TEST
     lateinit var locationMan: LocationManager
@@ -76,17 +79,32 @@ class MainActivity : AppCompatActivity() {
         //UV
         viewModelMet.getUvPaaSted(loc,this).observe(this){
             //Log.d("Fra main activity", it.toString())
+            val simpleDateFormat = SimpleDateFormat("HH")
+            val currentDateAndTime: String = simpleDateFormat.format(Date())
+            //Log.d("tid", currentDateAndTime)
             if (it != null){
+                /*
                 Log.d("Timeseries",
                     it.properties.timeseries[4].toString()
                 )
                 Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
+                */
             }
             for (i in it.properties.timeseries){
-                //Log.d("tag", i.time)
+                val time = i.time.split("T")
+                val clock = time[1].split(":")
+                val hour = clock[0]
+                //Log.d("Time fra uv", hour)
+
+                if (hour.toInt() == currentDateAndTime.toInt() ){
+                    //Log.d("Uv for nå", i.toString())
+                    uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                    break
+                }
             }
             //Log.d("Noe", it.properties.timeseries[0].time)
             //Log.d("Meta", it.properties.meta.updated_at)
+            Log.d("Loc", loc.position.uvIndex.toString())
         }
     }
 
@@ -125,6 +143,10 @@ class MainActivity : AppCompatActivity() {
 
     fun getMet(): ViewModelMet {
         return viewModelMet
+    }
+
+    fun getUvByTime(): Float{
+        return uvTime
     }
 
 
