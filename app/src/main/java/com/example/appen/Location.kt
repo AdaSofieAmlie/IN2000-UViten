@@ -61,8 +61,8 @@ class Location(act: MainActivity){
                                 " GPS alt : " + locationGps!!.altitude
                             )
                             */
-                            val uv: Float = main.getUvByTime()
-                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat(), uv)
+                            //val uv: Float = main.getUvByTime()
+                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat())
                             val viewMet = main.getMet()
                             viewMet.updatePositionMet(position)
 

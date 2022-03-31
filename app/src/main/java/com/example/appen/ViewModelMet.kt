@@ -17,7 +17,6 @@ class ViewModelMet: ViewModel() {
 
     private val dataSourceMet = DatasourceMet()
 
-    lateinit var main : MainActivity
 
     private val baseUrl: String = "https://api.met.no/weatherapi/locationforecast/2.0/complete.json?"
     var fullUrl: String = ""
@@ -30,9 +29,7 @@ class ViewModelMet: ViewModel() {
         }
     }
 
-    fun getUvPaaSted(locInn: Location,act: MainActivity): LiveData<Uv> {
-        main = act
-        location = locInn
+    fun getUvPaaSted(): LiveData<Uv> {
         return uvPaaSted
     }
 
@@ -54,4 +51,6 @@ class ViewModelMet: ViewModel() {
         fullUrl = baseUrl.plus("altitude=".plus(pos.alt.toString())).plus("&lat=").plus(pos.lat.toString()).plus("&lon=").plus(pos.lon.toString())
         Log.d("LINK", fullUrl)
     }
+
+
 }
