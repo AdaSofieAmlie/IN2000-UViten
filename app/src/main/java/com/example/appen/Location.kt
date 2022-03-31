@@ -7,7 +7,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-
+import android.view.View
 
 
 class Location(act: MainActivity){
@@ -23,6 +23,7 @@ class Location(act: MainActivity){
     private var locationGps: Location? = null
     private var locationNetwork: Location? = null
     var position: Pos = Pos(0,0.0F,0.0F)
+
 
     fun enableView() {
         getLocation()

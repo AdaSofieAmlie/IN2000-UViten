@@ -57,41 +57,24 @@ class HomeFragment : Fragment() {
         }
 
         main?.getMet()?.getUvPaaSted()?.observe(main!!){
-            //Log.d("Fra main activity", it.toString())
             val simpleDateFormat = SimpleDateFormat("HH")
             val currentDateAndTime: String = simpleDateFormat.format(Date())
-            //Log.d("tid", currentDateAndTime)
-            if (it != null){
-                /*
-                    Log.d("Timeseries",
-                        it.properties.timeseries[4].toString()
-                    )
-                    Log.d("UV:", it.properties.timeseries[4].data.instant.details.ultraviolet_index_clear_sky.toString())
-                    */
-            }
+
             for (i in it.properties.timeseries){
                 val time = i.time.split("T")
                 val clock = time[1].split(":")
                 val hour = clock[0]
-                //Log.d("Time fra uv", hour)
-
                 if (hour.toInt() == currentDateAndTime.toInt() ){
                     //Log.d("Uv for nå", i.toString())
                     uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
-                    tv?.text = uvTime.toString()
+                    Log.d("HEI1", tv.text.toString())
+                    Log.d("HEI2", uvTime.toString())
+                    tv.text = uvTime.toString()
                     break
                 }
             }
-            //Log.d("Noe", it.properties.timeseries[0].time)
-            //Log.d("Meta", it.properties.meta.updated_at)
-
-
-
         }
-
-
     }
-
 }
 
 class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
