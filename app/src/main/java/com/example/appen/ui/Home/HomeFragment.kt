@@ -1,5 +1,6 @@
 package com.example.appen.ui.Home
 
+import Uv
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +13,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.appen.MainActivity
 import com.example.appen.R
-import com.example.appen.databinding.ActivityMainBinding
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -56,23 +55,8 @@ class HomeFragment : Fragment() {
             }
         }
 
-        main?.getMet()?.getUvPaaSted()?.observe(main!!){
-            val simpleDateFormat = SimpleDateFormat("HH")
-            val currentDateAndTime: String = simpleDateFormat.format(Date())
-
-            for (i in it.properties.timeseries){
-                val time = i.time.split("T")
-                val clock = time[1].split(":")
-                val hour = clock[0]
-                if (hour.toInt() == currentDateAndTime.toInt() ){
-                    //Log.d("Uv for nå", i.toString())
-                    uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
-                    Log.d("HEI1", tv.text.toString())
-                    Log.d("HEI2", uvTime.toString())
-                    tv.text = uvTime.toString()
-                    break
-                }
-            }
+        main?.getMet()?.getUvPaaSted()?.observe(main){
+            demoCollectionAdapter.update(it, main)
         }
     }
 }
@@ -81,10 +65,35 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 
     override fun getItemCount(): Int = 2
 
+    private val simple = SimpleDisplayFragment()
+    private val advanced = AdvancedDisplayFragment()
+
     override fun createFragment(position: Int): Fragment {
         // Return a NEW fragment instance in createFragment(int)
-        if (position==0) return SimpleDisplayFragment()
-        else return AdvancedDisplayFragment()
+        if (position==0) return simple
+        else return advanced
+    }
+
+    fun update(innUv : Uv, innMain : MainActivity){
+        val fragments: List<Fragment> = innMain.supportFragmentManager.fragments
+        for (frag in fragments) {
+            if (frag.isVisible){
+                val homeFragments : List<Fragment> = frag.childFragmentManager.fragments
+                for (home in homeFragments){
+                    if (home.isVisible){
+                        val display: List<Fragment> = home.childFragmentManager.fragments
+                        for (disp in display){
+                            if (disp.isVisible){
+                                if (disp == simple){
+                                    val simpleDisp = disp as SimpleDisplayFragment
+                                    simpleDisp.updateUi(innUv)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -92,12 +101,37 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 // object in our collection.
 class SimpleDisplayFragment : Fragment() {
 
+    lateinit var simple : View
+    var uvTime: Float = 0.0F
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_simple_display, container, false)
+        simple = inflater.inflate(R.layout.fragment_simple_display, container, false)
+        return simple
+    }
+
+    fun updateUi (innUv : Uv){
+        val simpleDateFormat = SimpleDateFormat("HH")
+        val currentDateAndTime: String = simpleDateFormat.format(Date())
+
+        val tv = simple.findViewById<TextView>(R.id.tvSimple)
+
+        for (i in innUv.properties.timeseries){
+            val time = i.time.split("T")
+            val clock = time[1].split(":")
+            val hour = clock[0]
+            if (hour.toInt() == currentDateAndTime.toInt() ){
+                //Log.d("Uv for nå", i.toString())
+                uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                Log.d("HEI1", tv.text.toString())
+                Log.d("HEI2", uvTime.toString())
+                tv.text = uvTime.toString()
+                break
+            }
+        }
     }
 }
 
