@@ -103,6 +103,9 @@ class Location(act: MainActivity){
                                     "CodeAndroidLocation",
                                     " Network Longitude : " + locationNetwork!!.longitude
                                 )
+                                position = Pos(locationNetwork!!.altitude.toInt(),locationNetwork!!.latitude.toFloat(), locationNetwork!!.longitude.toFloat())
+                                val viewMet = main.getMet()
+                                viewMet.updatePositionMet(position)
                             }
                         }
 
