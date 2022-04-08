@@ -10,13 +10,15 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import com.example.appen.MainActivity
+import com.example.appen.R
 import com.example.appen.databinding.FragmentMapBinding
 import com.mapbox.android.gestures.MoveGestureDetector
+import com.mapbox.common.TileStoreOptions.MAPBOX_ACCESS_TOKEN
+import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
-import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxMap
-import com.mapbox.maps.Style
+import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.LocationPuck2D
@@ -35,6 +37,11 @@ import com.mapbox.maps.extension.style.layers.generated.heatmapLayer
 import com.mapbox.maps.extension.style.sources.addSource
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.plugin.MapProjection
+import com.mapbox.maps.plugin.Plugin
+import com.mapbox.search.ui.view.SearchBottomSheetView
+import com.mapbox.search.ui.view.category.SearchCategoriesBottomSheetView
+import com.mapbox.search.ui.view.feedback.SearchFeedbackBottomSheetView
+import com.mapbox.search.ui.view.place.SearchPlaceBottomSheetView
 
 
 class MapFragment : Fragment(){ //OnMapReadyCallback
@@ -42,11 +49,18 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var mainView: View
+
     //Mapbox
         //User location
     private lateinit var mapboxMap: MapboxMap
     private lateinit var mapView: MapView
     private lateinit var locationPermissionHelper: LocationPermissionHelper
+
+    private lateinit var searchBottomSheetView: SearchBottomSheetView
+    private lateinit var searchPlaceView: SearchPlaceBottomSheetView
+    private lateinit var searchCategoriesView: SearchCategoriesBottomSheetView
+    private lateinit var feedbackBottomSheetView: SearchFeedbackBottomSheetView
 
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
@@ -75,33 +89,49 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     ): View {
 
 
+        Mapbox.getInstance(this.requireContext(), "pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q")
 
         val dashboardViewModel =
             ViewModelProvider(this).get(MapViewModel::class.java)
 
+
+
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        searchBottomSheetView = binding.searchView
+        searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
+
 
         val textView: TextView = binding.textDashboard
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
 
-
         mapView = binding.mapView
         mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
+
+        mapboxMap = binding.mapView.getMapboxMap()
+
 
         locationPermissionHelper = LocationPermissionHelper(WeakReference(activity))
         locationPermissionHelper.checkPermissions {
             onMapReady()
         }
+        /*
         mapboxMap = binding.mapView.getMapboxMap().apply {
             loadStyleUri(
                 styleUri = Style.LIGHT
             ) { style -> addRuntimeLayers(style) }
             setMapProjection(MapProjection.Globe)
         }
+
+         */
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
     }
 
     private fun onMapReady() {
@@ -156,7 +186,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
                         literal(1.0)
                     }
                 }.toJson()
-            ).also { this.locationPuck = it }
+            )//.also { this.locationPuck = it }
         }
         Log.d(null,"Location Component listeners")
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
@@ -212,6 +242,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         Log.d(null,"... Destroy kart")
 
     }
+    /*
     private fun addRuntimeLayers(style: Style) {
         style.addSource(createEarthquakeSource())
         style.addLayerAbove(createHeatmapLayer(), "waterway-label")
@@ -425,5 +456,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         private const val HEATMAP_LAYER_SOURCE = "earthquakes"
         private const val CIRCLE_LAYER_ID = "earthquakes-circle"
     }
+
+     */
 
 }
