@@ -29,6 +29,8 @@ import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListen
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.search.*
 import com.mapbox.search.result.SearchResult
+import com.mapbox.search.ui.view.CommonSearchViewConfiguration
+import com.mapbox.search.ui.view.DistanceUnitType
 import com.mapbox.search.ui.view.SearchBottomSheetView
 import com.mapbox.search.ui.view.category.SearchCategoriesBottomSheetView
 import com.mapbox.search.ui.view.feedback.SearchFeedbackBottomSheetView
@@ -48,6 +50,8 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     private lateinit var mapboxMap: MapboxMap
     private lateinit var mapView: MapView
     private lateinit var locationPermissionHelper: LocationPermissionHelper
+
+
 
     private lateinit var searchBottomSheetView: SearchBottomSheetView
     private lateinit var searchPlaceView: SearchPlaceBottomSheetView
@@ -132,20 +136,11 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
             onMapReady()
         }
 
-        //SEARCH
-
-
-
-
-        /*
-
-         */
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //SEARCH
 
         /*
         val myView: View = layoutInflater.inflate(R.layout.custom_stub, null)
@@ -156,7 +151,20 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
 
         val searchBottomSheetView = binding.searchView
         searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
+        //SEARCH
+        searchPlaceView = binding.searchPlaceView.apply {
+            initialize(CommonSearchViewConfiguration(DistanceUnitType.IMPERIAL))
+            isNavigateButtonVisible = false
+            isShareButtonVisible = false
+            isFavoriteButtonVisible = false
+        }
 
+        searchCategoriesView = binding.searchCategoriesView
+        searchCategoriesView.initialize(CommonSearchViewConfiguration(DistanceUnitType.IMPERIAL))
+
+        feedbackBottomSheetView = binding.searchFeedbackView
+        feedbackBottomSheetView.initialize(savedInstanceState)
+        //SEARCH
     }
 
     private fun onMapReady() {
@@ -171,7 +179,6 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
             setupGesturesListener()
             Log.d(null,"LocationCompListener og CameraGestureListener kjører")
         }
-
     }
 
     private fun setupGesturesListener() {
