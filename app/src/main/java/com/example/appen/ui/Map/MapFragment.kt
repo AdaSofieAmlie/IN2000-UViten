@@ -1,5 +1,7 @@
 package com.example.appen.ui.Map
 
+//
+import com.mapbox.geojson.Point
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,38 +12,28 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import com.example.appen.MainActivity
 import com.example.appen.R
 import com.example.appen.databinding.FragmentMapBinding
+import com.mapbox.android.core.location.LocationEngineProvider
 import com.mapbox.android.gestures.MoveGestureDetector
-import com.mapbox.common.TileStoreOptions.MAPBOX_ACCESS_TOKEN
+import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
-import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.gestures.OnMoveListener
 import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
 import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location
-import java.lang.ref.WeakReference
-import com.mapbox.maps.extension.style.layers.addLayerAbove
-import com.mapbox.maps.extension.style.layers.addLayerBelow
-import com.mapbox.maps.extension.style.layers.generated.CircleLayer
-import com.mapbox.maps.extension.style.layers.generated.HeatmapLayer
-import com.mapbox.maps.extension.style.layers.generated.circleLayer
-import com.mapbox.maps.extension.style.layers.generated.heatmapLayer
-import com.mapbox.maps.extension.style.sources.addSource
-import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
-import com.mapbox.maps.plugin.MapProjection
-import com.mapbox.maps.plugin.Plugin
+import com.mapbox.search.*
+import com.mapbox.search.result.SearchResult
 import com.mapbox.search.ui.view.SearchBottomSheetView
 import com.mapbox.search.ui.view.category.SearchCategoriesBottomSheetView
 import com.mapbox.search.ui.view.feedback.SearchFeedbackBottomSheetView
 import com.mapbox.search.ui.view.place.SearchPlaceBottomSheetView
+import java.lang.ref.WeakReference
 
 
 class MapFragment : Fragment(){ //OnMapReadyCallback
@@ -62,6 +54,7 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     private lateinit var searchCategoriesView: SearchCategoriesBottomSheetView
     private lateinit var feedbackBottomSheetView: SearchFeedbackBottomSheetView
 
+
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
     }
@@ -81,49 +74,70 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
 
         override fun onMoveEnd(detector: MoveGestureDetector) {}
     }
+    //MapBox -Search-test
+    private lateinit var reverseGeocoding: ReverseGeocodingSearchEngine
+    private lateinit var searchRequestTask: SearchRequestTask
+
+    private val searchCallback = object : SearchCallback {
+
+        override fun onResults(results: List<SearchResult>, responseInfo: ResponseInfo) {
+            if (results.isEmpty()) {
+                Log.i("SearchApiExample", "No reverse geocoding results")
+            } else {
+                Log.i("SearchApiExample", "Reverse geocoding results: $results")
+            }
+        }
+
+        override fun onError(e: Exception) {
+            Log.i("SearchApiExample", "Reverse geocoding error", e)
+        }
+    }
+    //
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
         Mapbox.getInstance(this.requireContext(), "pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q")
+
 
         val dashboardViewModel =
             ViewModelProvider(this).get(MapViewModel::class.java)
 
-
+        MapboxSearchSdk.initialize(
+            application = requireActivity()!!.application,
+            accessToken = getString(R.string.mapbox_access_token),
+            locationEngine = LocationEngineProvider.getBestLocationEngine(requireActivity()!!.application)
+        )
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        searchBottomSheetView = binding.searchView
-        searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
+
 
 
         val textView: TextView = binding.textDashboard
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-
         mapView = binding.mapView
         mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
 
-        mapboxMap = binding.mapView.getMapboxMap()
 
+        //mapboxMap = binding.mapView.getMapboxMap()
 
+        mapView
         locationPermissionHelper = LocationPermissionHelper(WeakReference(activity))
         locationPermissionHelper.checkPermissions {
             onMapReady()
         }
+
+        //SEARCH
+
+
+
+
         /*
-        mapboxMap = binding.mapView.getMapboxMap().apply {
-            loadStyleUri(
-                styleUri = Style.LIGHT
-            ) { style -> addRuntimeLayers(style) }
-            setMapProjection(MapProjection.Globe)
-        }
 
          */
         return root
@@ -131,6 +145,17 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //SEARCH
+
+        /*
+        val myView: View = layoutInflater.inflate(R.layout.custom_stub, null)
+        searchBottomSheetView = myView.findViewById(R.id.search_view)
+        layoutInflater.inflate(R.layout.custom_stub, null)
+        searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
+        */
+
+        val searchBottomSheetView = binding.searchView
+        searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
 
     }
 
