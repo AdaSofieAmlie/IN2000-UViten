@@ -20,6 +20,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.appen.databinding.ActivityMainBinding
 
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.mapbox.android.core.location.LocationEngineProvider
+import com.mapbox.search.MapboxSearchSdk
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
     private val loc = Location(this)
     lateinit var tv: TextView
+
+
 
 
     private var inst: MainActivity? = null
@@ -83,7 +87,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        //UV
+        //Mapbox initialize
+        MapboxSearchSdk.initialize(
+            application = this.application,
+            accessToken = getString(R.string.mapbox_access_token),
+            locationEngine = LocationEngineProvider.getBestLocationEngine(this.application)
+        )
 
     }
 
@@ -124,8 +133,5 @@ class MainActivity : AppCompatActivity() {
         return viewModelMet
     }
 
-    fun getTV(): TextView {
-        return tv
-    }
 
 }
