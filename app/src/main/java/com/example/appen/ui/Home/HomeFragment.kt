@@ -2,6 +2,7 @@ package com.example.appen.ui.Home
 
 import Uv
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,8 +14,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.appen.MainActivity
 import com.example.appen.R
+import com.github.mikephil.charting.charts.ScatterChart
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.ScatterData
+import com.github.mikephil.charting.data.ScatterDataSet
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeFragment : Fragment() {
@@ -58,6 +65,8 @@ class HomeFragment : Fragment() {
         main?.getMet()?.getUvPaaSted()?.observe(main){
             demoCollectionAdapter.update(it, main)
         }
+
+
     }
 }
 
@@ -65,13 +74,20 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 
     override fun getItemCount(): Int = 2
 
-    private val simple = SimpleDisplayFragment()
-    private val advanced = AdvancedDisplayFragment()
+    private var uvobjekt: Uv? = null
+    private var simple = SimpleDisplayFragment(uvobjekt)
+    private var advanced = AdvancedDisplayFragment(uvobjekt)
 
     override fun createFragment(position: Int): Fragment {
         // Return a NEW fragment instance in createFragment(int)
-        if (position==0) return simple
-        else return advanced
+        if (position==0) {
+            simple = SimpleDisplayFragment(uvobjekt)
+            return simple
+        }
+        else {
+            advanced = AdvancedDisplayFragment(uvobjekt)
+            return advanced
+        }
     }
 
     fun update(innUv : Uv, innMain : MainActivity){
@@ -86,7 +102,13 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
                             if (disp.isVisible){
                                 if (disp == simple){
                                     val simpleDisp = disp as SimpleDisplayFragment
+                                    uvobjekt = innUv
+                                    Log.d("UpdateUI", uvobjekt!!.properties.timeseries.toString())
                                     simpleDisp.updateUi(innUv)
+                                } else if (disp == advanced){
+                                    val advancedDisp = disp as AdvancedDisplayFragment
+                                    uvobjekt = innUv
+                                    advancedDisp.updateUi(innUv)
                                 }
                             }
                         }
@@ -99,7 +121,7 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 
 // Instances of this class are fragments representing a single
 // object in our collection.
-class SimpleDisplayFragment : Fragment() {
+class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
     lateinit var simple : View
     var uvTime: Float = 0.0F
@@ -135,15 +157,67 @@ class SimpleDisplayFragment : Fragment() {
     }
 }
 
-class AdvancedDisplayFragment : Fragment() {
+class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
+    lateinit var advanced : View
+    lateinit var sc: ScatterChart
+    lateinit var scatterdata: ScatterData
+    var entries = ArrayList<BarEntry>()
+    var uvObjekt = uvobjekt
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_advanced_display, container, false)
+        advanced = inflater.inflate(R.layout.fragment_advanced_display, container, false)
+        return advanced
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        sc = advanced.findViewById(R.id.SCchart)
+        updatePlot()
+    }
+
+    fun updatePlot (){
+        addEntries()
+        sc.setDrawGridBackground(true)
+        sc.setGridBackgroundColor(Color.BLACK)
+        sc.xAxis.setDrawGridLines(false)
+        sc.axisLeft.setDrawGridLines(false)
+        sc.axisRight.setDrawGridLines(false)
+        sc.axisLeft.setDrawLabels(false)
+        sc.axisRight.setDrawLabels(false)
+        sc.setNoDataText("Loading...")
+        sc.setTouchEnabled(false)
+        sc.description.isEnabled = false
+        var scatterDataSet = ScatterDataSet(entries as List<Entry>?, "")
+        scatterdata = ScatterData(scatterDataSet)
+        sc.data = scatterdata
+        scatterDataSet.valueTextColor = Color.WHITE;
+        scatterDataSet.valueTextSize = 18f;
+        sc.invalidate()
+    }
+
+    fun addEntries(){
+        // ANTAKELSE: den første timen i timeseries er den vi er på nå
+        val timeseries = uvObjekt!!.properties.timeseries
+        for (i in 0..12){
+            val time = timeseries[i].time.split("T")
+            val hour = time[1].split(":")[0].toFloat()
+            val uv = timeseries[i].data.instant.details.ultraviolet_index_clear_sky.toFloat()
+            entries.add(BarEntry(hour, uv))
+        }
+    }
+
+    fun updateUi (innUv : Uv){
+        uvObjekt = innUv
+        //addEntries()
+        //sc.invalidate()
+        //sc.notifyDataSetChanged()
+        //updatePlot()
+    }
+
 }
 
 //TEST BRANCH

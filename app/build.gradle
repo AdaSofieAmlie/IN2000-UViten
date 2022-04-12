@@ -2,7 +2,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
     }
 }
 
@@ -80,6 +79,4 @@ dependencies {
 
     //MPandroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-
-
 }
