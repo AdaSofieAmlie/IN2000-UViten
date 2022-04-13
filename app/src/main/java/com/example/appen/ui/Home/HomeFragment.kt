@@ -250,7 +250,7 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val time = timeseries[i].time.split("T")
             val hour = time[1].split(":")[0].toFloat()
             val uv = timeseries[i].data.instant.details.ultraviolet_index_clear_sky.toFloat()
-            entries.add(BarEntry(i.toFloat(), uv))
+            entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()))
             next12Hours.add(hour.toInt())
             Log.d("Added to index: ", next12Hours[i].toString())
         }
