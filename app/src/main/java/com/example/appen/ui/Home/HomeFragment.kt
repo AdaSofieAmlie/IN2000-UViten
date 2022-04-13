@@ -24,6 +24,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
 
 
 class HomeFragment : Fragment() {
@@ -167,12 +168,17 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
     private var entries = ArrayList<BarEntry>()
     private var uvObjekt = uvobjekt
 
-    private class MyFormatter(n12h: ArrayList<Int>): ValueFormatter(){
+    private class XaxisFormatter(n12h: ArrayList<Int>): ValueFormatter(){
         var next12hours = n12h
 
         override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-
             return "${next12hours[value.toInt()]}"
+        }
+    }
+
+    private class YaxisFormatter(): ValueFormatter(){
+        override fun getFormattedValue(value: Float): String {
+            return value.roundToInt().toString()
         }
     }
 
@@ -225,8 +231,10 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
         scatterDataSet.valueTextColor = Color.WHITE;
         scatterDataSet.valueTextSize = 18f;
-        Log.d("Før Formatter: ", next12Hours.toString())
-        sc.xAxis.valueFormatter = MyFormatter(next12Hours)
+
+        // Retter opp tider og runder av UV-indeks
+        sc.xAxis.valueFormatter = XaxisFormatter(next12Hours)
+        sc.data.setValueFormatter(YaxisFormatter())
         //max synlig range?
         //sc.setVisibleXRangeMaximum(6F)
         //sc.setVisibleYRangeMaximum(4F, sc.axisLeft.axisDependency)
