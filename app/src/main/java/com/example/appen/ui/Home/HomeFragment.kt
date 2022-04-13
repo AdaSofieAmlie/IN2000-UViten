@@ -15,10 +15,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.appen.MainActivity
 import com.example.appen.R
 import com.github.mikephil.charting.charts.ScatterChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
 import com.github.mikephil.charting.data.ScatterDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -161,8 +163,18 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
     lateinit var advanced : View
     lateinit var sc: ScatterChart
     lateinit var scatterdata: ScatterData
-    var entries = ArrayList<BarEntry>()
-    var uvObjekt = uvobjekt
+    private var next12Hours = ArrayList<Int>()
+    private var entries = ArrayList<BarEntry>()
+    private var uvObjekt = uvobjekt
+
+    private class MyFormatter(n12h: ArrayList<Int>): ValueFormatter(){
+        var next12hours = n12h
+
+        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+
+            return "${next12hours[value.toInt()]}"
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -183,30 +195,56 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
         addEntries()
         sc.setDrawGridBackground(true)
         sc.setGridBackgroundColor(Color.BLACK)
+        sc.setNoDataText("Loading...")
+
+        //Scrolling
+        sc.setTouchEnabled(true)
+        sc.isDragEnabled = true
+        sc.setScaleEnabled(false)
+        sc.setPinchZoom(false)
+
+        //Fjerner streker bak grafen, så den er blank
         sc.xAxis.setDrawGridLines(false)
         sc.axisLeft.setDrawGridLines(false)
         sc.axisRight.setDrawGridLines(false)
         sc.axisLeft.setDrawLabels(false)
         sc.axisRight.setDrawLabels(false)
-        sc.setNoDataText("Loading...")
-        sc.setTouchEnabled(false)
+
+        //Sett str på text på x aksen
+        sc.xAxis.textSize = 20F
+        sc.extraTopOffset = 14F
+
         sc.description.isEnabled = false
         var scatterDataSet = ScatterDataSet(entries as List<Entry>?, "")
         scatterdata = ScatterData(scatterDataSet)
+
         sc.data = scatterdata
+
+        //fjerner flere linjer
+        sc.data.isHighlightEnabled = false
+
         scatterDataSet.valueTextColor = Color.WHITE;
         scatterDataSet.valueTextSize = 18f;
+        Log.d("Før Formatter: ", next12Hours.toString())
+        sc.xAxis.valueFormatter = MyFormatter(next12Hours)
+        //max synlig range?
+        //sc.setVisibleXRangeMaximum(6F)
+        //sc.setVisibleYRangeMaximum(4F, sc.axisLeft.axisDependency)
+
         sc.invalidate()
     }
 
     fun addEntries(){
         // ANTAKELSE: den første timen i timeseries er den vi er på nå
+        Log.d("addEntries: ", "Legger til entries")
         val timeseries = uvObjekt!!.properties.timeseries
         for (i in 0..12){
             val time = timeseries[i].time.split("T")
             val hour = time[1].split(":")[0].toFloat()
             val uv = timeseries[i].data.instant.details.ultraviolet_index_clear_sky.toFloat()
-            entries.add(BarEntry(hour, uv))
+            entries.add(BarEntry(i.toFloat(), uv))
+            next12Hours.add(hour.toInt())
+            Log.d("Added to index: ", next12Hours[i].toString())
         }
     }
 
@@ -219,5 +257,3 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
 }
-
-//TEST BRANCH
