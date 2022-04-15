@@ -203,12 +203,6 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
         sc.setGridBackgroundColor(Color.BLACK)
         sc.setNoDataText("Loading...")
 
-        //Scrolling
-        sc.setTouchEnabled(true)
-        sc.isDragEnabled = true
-        sc.setScaleEnabled(false)
-        sc.setPinchZoom(false)
-
         //Fjerner streker bak grafen, så den er blank
         sc.xAxis.setDrawGridLines(false)
         sc.axisLeft.setDrawGridLines(false)
@@ -238,6 +232,13 @@ class AdvancedDisplayFragment(uvobjekt: Uv?) : Fragment() {
         //max synlig range?
         //sc.setVisibleXRangeMaximum(6F)
         //sc.setVisibleYRangeMaximum(4F, sc.axisLeft.axisDependency)
+
+        //Scrolling
+        sc.setTouchEnabled(true)
+        sc.isDragEnabled = true
+        sc.setScaleEnabled(false)
+        sc.setPinchZoom(false)
+        sc.setVisibleXRangeMaximum(5F)
 
         sc.invalidate()
     }
