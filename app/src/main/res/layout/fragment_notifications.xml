@@ -19,13 +19,6 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="165dp"
-                android:src="@drawable/ic_baseline_settings_24" />
-
             <ImageView
                 android:id="@+id/profilImageView"
                 android:layout_width="match_parent"

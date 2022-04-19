@@ -50,10 +50,6 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
             textView.text = "Juster informasjonen så den passer deg!"
         }
         spinner = binding.profilSpinner
-        /*
-        val seekBar3: SeekBar = binding.profilSeekBar3
-        val seekBar3Value = binding.profilSeekBar3.progress
-        */
 
         ArrayAdapter.createFromResource(
             requireContext(),
