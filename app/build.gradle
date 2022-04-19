@@ -2,13 +2,15 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+
     }
 }
 
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id("kotlin-parcelize")
+
 }
 
 android {
@@ -78,8 +80,7 @@ dependencies {
     implementation "io.ktor:ktor-client-android:$ktor_version"
     implementation "io.ktor:ktor-client-gson:$ktor_version"
 
-    //MPandroidChart
-    //implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 
 
 }
