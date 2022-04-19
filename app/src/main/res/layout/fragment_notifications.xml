@@ -34,17 +34,18 @@
 
             <TextView
                 android:id="@+id/profilTvOverspinner"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:textAlignment="center"
-                android:textSize="20sp" />
+                android:textSize="15dp" />
 
             <Spinner
                 android:id="@+id/profilSpinner"
                 android:layout_width="300dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginLeft="10dp"
                 android:tooltipText="Velg sårbarhet" />
 
             <SeekBar
@@ -54,7 +55,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:max="4"
-                android:progress="0" />
+                android:progress="0"
+                android:tooltipText="Hvor lett blir du solbrent?"
+                />
 
             <SeekBar
                 android:id="@+id/profilSeekBar2"
@@ -63,16 +66,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:max="4"
-                android:progress="0" />
+                android:progress="0"
+                android:tooltipText="Hvor mye klær har du på deg?"/>
 
-            <SeekBar
-                android:id="@+id/profilSeekBar3"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
-                android:layout_width="300dp"
+
+            <Button
+                android:id="@+id/profilLagre"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:max="4"
-                android:progress="0" />
+                android:layout_marginTop="20dp"
+                android:text="Lagre" />
+
+            <TextView
+                android:id="@+id/uvTestTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Her kommer anbefaling"
+                android:textAlignment="center"
+                android:textSize="20sp"/>
+
 
             <TextView
                 android:id="@+id/profilFakta1"
@@ -141,6 +154,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.614" />
+
         </LinearLayout>
     </ScrollView>
 
