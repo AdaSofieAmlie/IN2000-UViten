@@ -1,18 +1,41 @@
 package com.example.appen.ui.Home
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
 import Uv
 import android.app.Activity
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.health.TimerStat
+import android.preference.PreferenceManager
 import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.RemoteViews
 import android.widget.TextView
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.appen.MainActivity
 import com.example.appen.R
+import com.example.appen.ui.Home.Notification.Companion.hideTimerNotification
+import kotlinx.coroutines.Dispatchers
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar
+import okhttp3.Dispatcher
+import java.util.prefs.Preferences
+import android.app.Notification as Notification
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -137,12 +160,34 @@ class SimpleDisplayFragment : Fragment() {
 
 class AdvancedDisplayFragment : Fragment() {
 
+    lateinit var advanced: View
+    lateinit var timerObject: Timer
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_advanced_display, container, false)
+        advanced = inflater.inflate(R.layout.fragment_advanced_display, container, false)
+        timerObject = Timer(advanced).settUpTimer(6)       //6 sec
+
+        return advanced
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        if (sharedPreferences.getTimeState(advanced.context) == Timer.TimeState.running) {
+            val wakeUpTime = timerObject.onPauseStartBackgroundTimer()
+        }
+        timerObject.saveOnPause()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        timerObject.initTimer()
+        Timer.removeAlarm(advanced.context)
     }
 }
 
