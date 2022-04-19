@@ -239,6 +239,7 @@ class Timer (advancedIn : View) {
     }
 
     fun updateButtons(){
+        timeState = sharedPreferences.getTimeState(advanced.context)
         when (timeState){
             TimeState.running -> {
                 buttonStart.isEnabled = false
