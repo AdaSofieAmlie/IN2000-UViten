@@ -180,8 +180,9 @@ class AdvancedDisplayFragment : Fragment() {
         if (sharedPreferences.getTimeState(advanced.context) == Timer.TimeState.running) {
             val wakeUpTime = timerObject.onPauseStartBackgroundTimer()
         }
-        timerObject.saveOnPause()
-
+        if (timerObject.timeState == Timer.TimeState.running || timerObject.timeState == Timer.TimeState.paused){
+            timerObject.saveOnPause()
+        }
     }
 
     override fun onResume() {
