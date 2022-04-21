@@ -7,7 +7,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-
+import android.view.View
 
 
 class Location(act: MainActivity){
@@ -23,6 +23,7 @@ class Location(act: MainActivity){
     private var locationGps: Location? = null
     private var locationNetwork: Location? = null
     var position: Pos = Pos(0,0.0F,0.0F)
+
 
     fun enableView() {
         getLocation()
@@ -61,8 +62,8 @@ class Location(act: MainActivity){
                                 " GPS alt : " + locationGps!!.altitude
                             )
                             */
-                            val uv: Float = main.getUvByTime()
-                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat(), uv)
+                            //val uv: Float = main.getUvByTime()
+                            position = Pos(locationGps!!.altitude.toInt(),locationGps!!.latitude.toFloat(), locationGps!!.longitude.toFloat())
                             val viewMet = main.getMet()
                             viewMet.updatePositionMet(position)
 
@@ -102,6 +103,9 @@ class Location(act: MainActivity){
                                     "CodeAndroidLocation",
                                     " Network Longitude : " + locationNetwork!!.longitude
                                 )
+                                position = Pos(locationNetwork!!.altitude.toInt(),locationNetwork!!.latitude.toFloat(), locationNetwork!!.longitude.toFloat())
+                                val viewMet = main.getMet()
+                                viewMet.updatePositionMet(position)
                             }
                         }
 

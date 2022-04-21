@@ -10,4 +10,11 @@
     <string name="pauseButton">Pause</string>
     <string name="stopButton">Stop</string>
 
+    <string-array name="spinner_profil">
+        <item>Velg Aktivitet</item>
+        <item>Stranda</item>
+        <item>Fjelltur</item>
+        <item>Bytur</item>
+        <item>Parken</item>
+    </string-array>
 </resources>
