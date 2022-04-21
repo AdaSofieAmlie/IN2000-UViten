@@ -191,7 +191,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         sc.xAxis.textSize = 20F
         sc.extraTopOffset = 12F
 
-        sc.setVisibleYRange(-1f, 6f, sc.axisRight.axisDependency)
+        sc.setVisibleYRange(-1f, (yAxisMaxVisible+2).toFloat(), sc.axisRight.axisDependency)
         sc.setVisibleXRangeMaximum(6f)
 
         //# Alt som er relatert til touch og scrolling
