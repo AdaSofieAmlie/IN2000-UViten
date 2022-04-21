@@ -33,13 +33,6 @@
                 android:textAlignment="center"
                 android:textSize="15dp" />
 
-            <Spinner
-                android:id="@+id/profilSpinner"
-                android:layout_width="300dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:tooltipText="Velg sårbarhet" />
 
             <SeekBar
                 android:id="@+id/profilSeekBar"
@@ -48,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:max="4"
+                android:max="5"
                 android:progress="0"
                 android:tooltipText="Hvor lett blir du solbrent?"
                 />
@@ -60,23 +53,38 @@
                 android:orientation="horizontal"
                 android:gravity="center">
 
-                <CheckBox
-                    android:id="@+id/checkBox3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sand" />
 
-                <CheckBox
-                    android:id="@+id/checkBox4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vann" />
+                <ToggleButton
+                    android:id="@+id/snoo"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:textOff="Snø"
+                    android:textOn="Snø" />
 
-                <CheckBox
-                    android:id="@+id/checkBox5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Snø" />
+                <ToggleButton
+                    android:id="@+id/fjell"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:textOff="Fjell"
+                    android:textOn="Fjell"/>
+
+                <ToggleButton
+                    android:id="@+id/sand"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:textOff="Sand"
+                    android:textOn="Sand"/>
+
+                <ToggleButton
+                    android:id="@+id/vann"
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="10dp"
+                    android:textOff="Vann"
+                    android:textOn="Vann"/>
             </LinearLayout>
 
             <Button
@@ -94,6 +102,7 @@
                 android:hint="Her kommer anbefaling"
                 android:textAlignment="center"
                 android:textSize="20sp"/>
+
 
 
             <TextView

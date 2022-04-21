@@ -49,16 +49,6 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
         notificationsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = "Juster informasjonen så den passer deg!"
         }
-        spinner = binding.profilSpinner
-
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.spinner_profil,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
         lagre = binding.profilLagre
         lagre.setOnClickListener{
             kalkulerAnbefaling()
@@ -95,8 +85,14 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     fun kalkulerAnbefaling(){
         var spinnerverdi = 0
         val uvTime : Float = 4.0F
-        val seekBar1Value= binding.profilSeekBar.progress
-        val seekBar2Value= binding.profilSeekBar2.progress
+        var seekBar1Value = binding.profilSeekBar.progress.toDouble()
+        seekBar1Value = (seekBar1Value+1) * 16.67
+        /*
+        var seekBar2Value= binding.profilSeekBar2.progress
+        seekBar2Value = seekBar2Value * 8
+         */
+
+        /*
         var tv = binding.uvTestTv
         when(spinner.selectedItem){
             "Velg Aktivitet"-> spinnerverdi = 0
@@ -105,47 +101,77 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
             "Fjelltur"      -> spinnerverdi = 2
             "Stranda"       -> spinnerverdi = 0
         }
+
+         */
         // max score 12 - 4+4+4
         // Ikke ulik verdi for faktorene
-        beskyttelseScore = spinnerverdi+seekBar1Value+seekBar2Value
-        Log.d("BeskyttelseScore", beskyttelseScore.toString())
+        beskyttelseScore = seekBar1Value.toInt() + seekBar2Value
 
         // max beskyttelseScore 12
         // when eller if (>/<)
-        when(uvTime.toInt()){
-            in 0..2     -> {
+
+        //Toogles
+        val fjell: ToggleButton = binding.fjell
+        val snoo: ToggleButton = binding.snoo
+        val sand: ToggleButton = binding.sand
+        val vann: ToggleButton = binding.vann
+
+        if(fjell.isChecked) {
+            beskyttelseScore -= 10
+        }
+        if(snoo.isChecked) {
+            beskyttelseScore -= 10
+        }
+        if(sand.isChecked) {
+            beskyttelseScore -= 10
+        }
+        if(vann.isChecked) {
+            beskyttelseScore -= 10
+        }
+        Log.d("BeskyttelseScore", beskyttelseScore.toString())
+        //Toogles
+        when(uvTime){
+            in 0.0F..2.0F     -> anbefalSpf6()
+
+            in 2.0F..4.0F     -> {
                 when(beskyttelseScore){
-                    in 0..2 -> anbefalSpf15()
-                    in 2..5 -> anbefalSpf30()
+                    in 0..20 -> anbefalSpf20()
+                    in 20..50 -> anbefalSpf15()
+                    in 50..70 -> anbefalSpf10()
+                    in 70..100 -> anbefalSpf6()
 
                 }
             }
-            in 2..5     -> {
-                if(beskyttelseScore>=10){
-                    anbefalSpf15()
-                } else {
-                    anbefalSpf20()
-                }
-            }
-            in 5..7     -> {
+            in 4.0F..6.0F     -> {
                 when(beskyttelseScore){
-
+                    in 0..20 -> anbefalSpf30()
+                    in 20..50 -> anbefalSpf20()
+                    in 50..70 -> anbefalSpf15()
+                    in 70..100 -> anbefalSpf10()
 
                 }
             }
-            in 7..10    -> {
+            in 6.0F..8.0F    -> {
                 when(beskyttelseScore){
-
+                    in 0..20 -> anbefalSpf40()
+                    in 20..50 -> anbefalSpf30()
+                    in 50..70 -> anbefalSpf20()
+                    in 70..100 -> anbefalSpf15()
 
                 }
             }
-            in 10..11   -> {
+            in 8.0F..11.0F   -> {
                 when(beskyttelseScore){
-
-
+                    in 0..20 -> anbefalSpf50()
+                    in 20..50 -> anbefalSpf40()
+                    in 50..100 -> anbefalSpf30()
                 }
             }
         }
+    }
+    fun anbefalSpf6(){
+        val tv = binding.uvTestTv
+        tv.text = "Anbefaler Spf 6"
     }
     fun anbefalSpf10(){
         val tv = binding.uvTestTv
@@ -162,6 +188,10 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     fun anbefalSpf30(){
         val tv = binding.uvTestTv
         tv.text = "Anbefaler Spf 30"
+    }
+    fun anbefalSpf40(){
+        val tv = binding.uvTestTv
+        tv.text = "Anbefaler Spf 40"
     }
     fun anbefalSpf50(){
         val tv = binding.uvTestTv
