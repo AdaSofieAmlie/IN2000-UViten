@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.media.Image
 import android.os.Build
 import Uv
 import android.app.Activity
@@ -15,16 +16,16 @@ import android.os.CountDownTimer
 import android.os.health.TimerStat
 import android.preference.PreferenceManager
 import android.util.Log
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.RemoteViews
-import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.isVisible
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -35,6 +36,7 @@ import com.example.appen.ui.Home.Notification.Companion.hideTimerNotification
 import kotlinx.coroutines.Dispatchers
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
 import okhttp3.Dispatcher
+import java.util.*
 import java.util.prefs.Preferences
 import android.app.Notification as Notification
 import java.text.SimpleDateFormat
@@ -150,11 +152,28 @@ class SimpleDisplayFragment : Fragment() {
             if (hour.toInt() == currentDateAndTime.toInt() ){
                 //Log.d("Uv for nå", i.toString())
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                updateIcons(uvTime)
                 Log.d("HEI1", tv.text.toString())
                 Log.d("HEI2", uvTime.toString())
                 tv.text = uvTime.toString()
                 break
             }
+        }
+    }
+
+    fun updateIcons(uvTime : Float){
+        Log.d("noe", uvTime.toString())
+
+        if (0 <= uvTime && uvTime <= 2.4){
+            Log.d("show one icon", "Glasses")
+        } else if (2.5 <= uvTime && uvTime <= 5.4){
+            Log.d("show two icons", "Glasses, Sunscreen")
+        } else if (5.5 <= uvTime && uvTime <= 7.4){
+            Log.d("show three icons", "Glasses, Sunscreen, Cap")
+        } else if (7.5 <= uvTime && uvTime <= 10.4){
+            Log.d("show four icons", "Glasses, Sunscreen, Cap, Clothes")
+        } else {
+            Log.d("show five icons", "Glasses, Sunscreen, Cap, Clothes, Shade")
         }
     }
 }
@@ -189,6 +208,7 @@ class AdvancedDisplayFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        timerObject.startButtons()
         timerObject.initTimer()
         Timer.removeAlarm(advanced.context)
     }

@@ -52,7 +52,6 @@
         android:layout_centerHorizontal="true"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
         android:layout_weight="3"
-
         >
 
         <Button
@@ -60,7 +59,9 @@
             android:text="@string/startButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:enabled="false"
+            >
         </Button>
 
         <Button
@@ -68,7 +69,8 @@
             android:text="@string/pauseButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:enabled="false">
         </Button>
 
         <Button
@@ -76,7 +78,9 @@
             android:text="@string/stopButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight ="1">
+            android:layout_weight ="1"
+            android:enabled="false"
+            >
         </Button>
 
     </LinearLayout>

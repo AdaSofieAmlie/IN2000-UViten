@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
+import android.os.Handler
 import android.preference.PreferenceManager
 import android.view.View
 import android.widget.Button
@@ -17,12 +18,13 @@ class Timer (advancedIn : View) {
 
     lateinit var tvTimer : TextView
     lateinit var progress : MaterialProgressBar
-    lateinit var buttonStart : Button
-    lateinit var buttonPause : Button
-    lateinit var buttonStop : Button
+    val  buttonStart : Button = advancedIn.findViewById(R.id.buttonStart)
+    val buttonPause : Button = advancedIn.findViewById(R.id.buttonPause)
+    val buttonStop : Button = advancedIn.findViewById(R.id.buttonStop)
+
     lateinit var timer : CountDownTimer
     private var timerLengthInSeconds = 0L
-    lateinit var timeState : TimeState
+    var timeState : TimeState = TimeState.stopped
     private var secondsRemaining = 0L
 
     val advanced = advancedIn
@@ -64,13 +66,18 @@ class Timer (advancedIn : View) {
 
     }
 
+    fun startButtons(){
+        buttonStart.isEnabled = false
+        buttonPause.isEnabled = false
+        buttonStop.isEnabled = false
+    }
+
     fun settUpTimer(tid : Long) : Timer{
         tvTimer = advanced.findViewById(R.id.tvDigitalTime)
-        buttonStart = advanced.findViewById(R.id.buttonStart)
-        buttonPause = advanced.findViewById(R.id.buttonPause)
-        buttonStop = advanced.findViewById(R.id.buttonStop)
         progress = advanced.findViewById(R.id.progress_circular)
         progress.visibility = View.VISIBLE
+
+        updateButtons()
 
         val savedTime= sharedPreferences.getTimerLengthSeconds(advanced.context)
         if ( savedTime == 0L){
@@ -106,8 +113,6 @@ class Timer (advancedIn : View) {
             timeState = TimeState.stopped
             updateButtons()
         }
-        buttonStop.isEnabled = false
-        buttonPause.isEnabled = false
 
         return this
     }
@@ -239,7 +244,6 @@ class Timer (advancedIn : View) {
     }
 
     fun updateButtons(){
-        timeState = sharedPreferences.getTimeState(advanced.context)
         when (timeState){
             TimeState.running -> {
                 buttonStart.isEnabled = false
@@ -253,7 +257,7 @@ class Timer (advancedIn : View) {
             }
             TimeState.stopped -> {
                 buttonStart.isEnabled = true
-                buttonPause.isEnabled = true
+                buttonPause.isEnabled = false
                 buttonStop.isEnabled = false
             }
         }
