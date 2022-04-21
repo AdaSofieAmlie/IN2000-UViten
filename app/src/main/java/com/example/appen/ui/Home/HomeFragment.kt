@@ -16,6 +16,7 @@ import android.os.CountDownTimer
 import android.os.health.TimerStat
 import android.preference.PreferenceManager
 import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -203,7 +204,6 @@ class AdvancedDisplayFragment : Fragment() {
         if (timerObject.timeState == Timer.TimeState.running || timerObject.timeState == Timer.TimeState.paused){
             timerObject.saveOnPause()
         }
-
     }
 
     override fun onResume() {
