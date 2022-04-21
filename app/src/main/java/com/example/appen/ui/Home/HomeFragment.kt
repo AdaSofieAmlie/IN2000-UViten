@@ -119,6 +119,8 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 // object in our collection.
 class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     lateinit var simple : View
+    var uvTime: Float = 0.0F
+
     private var uvObjekt = uvobjekt
     lateinit var sc: ScatterChart
     lateinit var scatterdata: ScatterData
@@ -148,10 +150,6 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     ): View {
         simple = inflater.inflate(R.layout.fragment_simple_display, container, false)
         return simple
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     fun initializePlot (){
