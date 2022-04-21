@@ -1,6 +1,7 @@
 package com.example.appen
 
 import Pos
+import Uv
 import android.annotation.SuppressLint
 import android.location.Location
 import android.location.LocationListener
@@ -146,4 +147,5 @@ class Location(act: MainActivity){
         }
 
     }
+
 }

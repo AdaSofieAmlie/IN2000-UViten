@@ -12,6 +12,10 @@ import com.example.appen.R
 import com.example.appen.databinding.FragmentNotificationsBinding
 import Uv
 import android.util.Log
+import com.example.appen.Location
+import com.example.appen.MainActivity
+import com.example.appen.ui.Home.HomeViewModel
+import com.example.appen.ui.Home.sharedPreferencesUser
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.log
@@ -23,14 +27,14 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    var location = activity as Location?
 
     //Score
     var beskyttelseScore = 0
     //aktivitet
     lateinit var spinner: Spinner
     //hudtype & klær
-    var seekBar1Value = 0
-    var seekBar2Value = 0
+    lateinit var seekBar1Value: SeekBar
     //lagreKnapp
     lateinit var lagre : Button
 
@@ -49,21 +53,27 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
         notificationsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = "Juster informasjonen så den passer deg!"
         }
-        spinner = binding.profilSpinner
-
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.spinner_profil,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
         lagre = binding.profilLagre
         lagre.setOnClickListener{
+
             kalkulerAnbefaling()
+
         }
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        seekBar1Value = binding.profilSeekBar
+        val fjell: ToggleButton = binding.fjell
+        val snoo: ToggleButton = binding.snoo
+        val sand: ToggleButton = binding.sand
+        val vann: ToggleButton = binding.vann
+        seekBar1Value.progress = sharedPreferencesUser.getSliderValue(requireContext())
+        fjell.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
+        snoo.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 2)
+        sand.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 3)
+        vann.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 4)
     }
 
     override fun onDestroyView() {
@@ -93,10 +103,17 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     fun kalkulerAnbefaling(){
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         var spinnerverdi = 0
         val uvTime : Float = 4.0F
-        val seekBar1Value= binding.profilSeekBar.progress
-        val seekBar2Value= binding.profilSeekBar2.progress
+        var seekBar1ValueRegning = binding.profilSeekBar.progress.toDouble()
+        seekBar1ValueRegning = (seekBar1ValueRegning+1) * 16.67
+        /*
+        var seekBar2Value= binding.profilSeekBar2.progress
+        seekBar2Value = seekBar2Value * 8
+         */
+
+        /*
         var tv = binding.uvTestTv
         when(spinner.selectedItem){
             "Velg Aktivitet"-> spinnerverdi = 0
@@ -105,67 +122,39 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
             "Fjelltur"      -> spinnerverdi = 2
             "Stranda"       -> spinnerverdi = 0
         }
+
+         */
         // max score 12 - 4+4+4
         // Ikke ulik verdi for faktorene
-        beskyttelseScore = spinnerverdi+seekBar1Value+seekBar2Value
-        Log.d("BeskyttelseScore", beskyttelseScore.toString())
+        beskyttelseScore = seekBar1ValueRegning.toInt()
 
         // max beskyttelseScore 12
         // when eller if (>/<)
-        when(uvTime.toInt()){
-            in 0..2     -> {
-                when(beskyttelseScore){
-                    in 0..2 -> anbefalSpf15()
-                    in 2..5 -> anbefalSpf30()
 
-                }
-            }
-            in 2..5     -> {
-                if(beskyttelseScore>=10){
-                    anbefalSpf15()
-                } else {
-                    anbefalSpf20()
-                }
-            }
-            in 5..7     -> {
-                when(beskyttelseScore){
+        //Toogles
+        val fjell: ToggleButton = binding.fjell
+        val snoo: ToggleButton = binding.snoo
+        val sand: ToggleButton = binding.sand
+        val vann: ToggleButton = binding.vann
 
-
-                }
-            }
-            in 7..10    -> {
-                when(beskyttelseScore){
-
-
-                }
-            }
-            in 10..11   -> {
-                when(beskyttelseScore){
-
-
-                }
-            }
+        if(fjell.isChecked) {
+            beskyttelseScore -= 10
         }
+        if(snoo.isChecked) {
+            beskyttelseScore -= 10
+        }
+        if(sand.isChecked) {
+            beskyttelseScore -= 10
+        }
+        if(vann.isChecked) {
+            beskyttelseScore -= 10
+        }
+        homeViewModel._beskyttelsesScore.value = beskyttelseScore
+        Log.d("BeskyttelseScore", beskyttelseScore.toString())
+        sharedPreferencesUser.setSliderValue(seekBar1Value.progress,requireContext())
+        sharedPreferencesUser.setTooglesValue(fjell.isChecked, 1, requireContext())
+        sharedPreferencesUser.setTooglesValue(snoo.isChecked, 2, requireContext())
+        sharedPreferencesUser.setTooglesValue(sand.isChecked, 3, requireContext())
+        sharedPreferencesUser.setTooglesValue(vann.isChecked, 4, requireContext())
     }
-    fun anbefalSpf10(){
-        val tv = binding.uvTestTv
-        tv.text = "Anbefaler Spf 10"
-    }
-    fun anbefalSpf15(){
-        val tv = binding.uvTestTv
-        tv.text = "Anbefaler Spf 15"
-    }
-    fun anbefalSpf20(){
-        val tv = binding.uvTestTv
-        tv.text = "Anbefaler Spf 20"
-    }
-    fun anbefalSpf30(){
-        val tv = binding.uvTestTv
-        tv.text = "Anbefaler Spf 30"
-    }
-    fun anbefalSpf50(){
-        val tv = binding.uvTestTv
-        tv.text = "Anbefaler Spf 50"
-    }
-
 }
