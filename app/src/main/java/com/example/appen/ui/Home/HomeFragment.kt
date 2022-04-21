@@ -26,6 +26,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.appen.MainActivity
@@ -48,6 +49,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
+
+    var uvObjekt: Uv? = null
 
 
 class HomeFragment : Fragment() {
@@ -87,6 +90,7 @@ class HomeFragment : Fragment() {
         }
 
         main?.getMet()?.getUvPaaSted()?.observe(main){
+            uvObjekt = it
             demoCollectionAdapter.update(it, main)
         }
     }
@@ -165,6 +169,8 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             return value.roundToInt().toString()
         }
     }
+
+    lateinit var tv: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -249,10 +255,12 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     fun updateUi (innUv : Uv){
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        var main = activity as MainActivity?
         val simpleDateFormat = SimpleDateFormat("HH")
         val currentDateAndTime: String = simpleDateFormat.format(Date())
 
-        val tv = simple.findViewById<TextView>(R.id.tvSimple)
+        tv = simple.findViewById<TextView>(R.id.tvSimple)
 
         for (i in innUv.properties.timeseries){
             val time = i.time.split("T")
@@ -263,10 +271,62 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
                 Log.d("HEI1", tv.text.toString())
                 Log.d("HEI2", uvTime.toString())
+                innUv.uvTime = uvTime
                 tv.text = uvTime.toString()
                 break
             }
         }
+        homeViewModel._beskyttelsesScore.observe(viewLifecycleOwner){
+            anbefaling(it)
+        }
+
+    }
+
+    fun anbefaling(beskyttelse: Int) {
+        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        when(uvTime){
+            in 0.0F..2.0F     -> anbefalSpf(6)
+
+
+            in 2.0F..4.0F     -> {
+                when(beskyttelse){
+                    in 0..20 -> anbefalSpf(20)
+                    in 20..50 -> anbefalSpf(15)
+                    in 50..70 -> anbefalSpf(10)
+                    in 70..100 -> anbefalSpf(6)
+
+                }
+            }
+            in 4.0F..6.0F     -> {
+                when(beskyttelse){
+                    in 0..20 -> anbefalSpf(30)
+                    in 20..50 -> anbefalSpf(20)
+                    in 50..70 -> anbefalSpf(15)
+                    in 70..100 -> anbefalSpf(10)
+
+                }
+            }
+            in 6.0F..8.0F    -> {
+                when(beskyttelse){
+                    in 0..20 -> anbefalSpf(40)
+                    in 20..50 -> anbefalSpf(30)
+                    in 50..70 -> anbefalSpf(20)
+                    in 70..100 -> anbefalSpf(15)
+
+                }
+            }
+            in 8.0F..11.0F   -> {
+                when(beskyttelse){
+                    in 0..20 -> anbefalSpf(50)
+                    in 20..50 -> anbefalSpf(40)
+                    in 50..100 -> anbefalSpf(30)
+                }
+            }
+        }
+    }
+
+    fun anbefalSpf(spf: Int){
+        tv.text = "Anbefaler Spf " + spf
     }
 }
 
@@ -305,3 +365,41 @@ class AdvancedDisplayFragment : Fragment() {
 }
 
 //TEST BRANCH
+
+class sharedPreferencesUser() {
+    companion object {
+
+        const val sliderId = "com.example.appen.ui.home.sliderValue"
+
+        fun getSliderValue(context: Context): Int {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            return pref.getInt(sliderId, 0)
+        }
+
+        fun setSliderValue(sliderValue: Int, context: Context) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putInt(sliderId, sliderValue)
+            editor.apply()
+        }
+
+        var toogleId = "com.example.appen.ui.home.sliderValue"
+
+        fun getTooglesValue(context: Context, id: Int ): Boolean {
+            val pref = PreferenceManager.getDefaultSharedPreferences(context)
+            toogleId += id.toString()
+            val returnValue: Boolean = pref.getBoolean(toogleId, false)
+            Log.d("toogle", toogleId)
+            Log.d("verdi", returnValue.toString())
+            toogleId = toogleId.substring(0, toogleId.length - 1)
+            return returnValue
+        }
+
+        fun setTooglesValue(verdi: Boolean, id: Int, context: Context) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            toogleId += id.toString()
+            editor.putBoolean(toogleId, verdi)
+            toogleId = toogleId.substring(0, toogleId.length - 1)
+            editor.apply()
+        }
+    }
+}

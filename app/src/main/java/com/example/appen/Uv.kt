@@ -1,7 +1,8 @@
 data class Uv(
     val geometry: Geometry,
     val properties: Properties,
-    val type: String
+    val type: String,
+    var uvTime: Float?
 )
 
 data class Units(
