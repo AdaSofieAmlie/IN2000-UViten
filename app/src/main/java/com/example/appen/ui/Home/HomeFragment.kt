@@ -22,6 +22,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
 import com.github.mikephil.charting.data.ScatterDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
@@ -105,6 +107,7 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
                                     uvobjekt = innUv
                                     Log.d("UpdateUI", uvobjekt!!.properties.timeseries.toString())
                                     simpleDisp.updateUi(innUv)
+                                    simpleDisp.updatePlot(innUv)
                                 }
                             }
                         }
@@ -218,11 +221,32 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         }
     }
 
-    fun updateUi (innUv : Uv){
+    fun updatePlot (innUv : Uv){
         if (!update) return
         update = false
         uvObjekt = innUv
         initializePlot()
+    }
+
+    fun updateUi (innUv : Uv){
+        val simpleDateFormat = SimpleDateFormat("HH")
+        val currentDateAndTime: String = simpleDateFormat.format(Date())
+
+        val tv = simple.findViewById<TextView>(R.id.tvSimple)
+
+        for (i in innUv.properties.timeseries){
+            val time = i.time.split("T")
+            val clock = time[1].split(":")
+            val hour = clock[0]
+            if (hour.toInt() == currentDateAndTime.toInt() ){
+                //Log.d("Uv for nå", i.toString())
+                uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                Log.d("HEI1", tv.text.toString())
+                Log.d("HEI2", uvTime.toString())
+                tv.text = uvTime.toString()
+                break
+            }
+        }
     }
 }
 
