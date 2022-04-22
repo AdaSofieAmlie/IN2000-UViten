@@ -332,6 +332,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
     fun anbefalSpf(spf: Int){
         tv.text = "Anbefaler Spf " + spf
+        //Test
     }
 
     fun updateIcons(uvTime : Float){
