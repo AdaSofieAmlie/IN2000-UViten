@@ -11,7 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.appen.R
 import com.example.appen.databinding.FragmentNotificationsBinding
 import Uv
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContentProviderCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.example.appen.Location
 import com.example.appen.MainActivity
 import com.example.appen.ui.Home.HomeViewModel
@@ -33,7 +36,7 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     var beskyttelseScore = 0
     //aktivitet
     lateinit var spinner: Spinner
-    //hudtype & klær
+    //hudtype
     lateinit var seekBar1Value: SeekBar
     //lagreKnapp
     lateinit var lagre : Button
@@ -56,10 +59,14 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
         lagre = binding.profilLagre
         lagre.setOnClickListener{
 
-            kalkulerAnbefaling()
+            save()
 
         }
         return root
+    }
+
+    companion object{
+        val user = this
     }
 
     override fun onResume() {
@@ -102,54 +109,17 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // write custom code for progress is stopped
     }
 
-    fun kalkulerAnbefaling(){
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        var spinnerverdi = 0
-        val uvTime : Float = 4.0F
-        var seekBar1ValueRegning = binding.profilSeekBar.progress.toDouble()
-        seekBar1ValueRegning = (seekBar1ValueRegning+1) * 16.67
-        /*
-        var seekBar2Value= binding.profilSeekBar2.progress
-        seekBar2Value = seekBar2Value * 8
-         */
+    fun fetchContext() : Context {
+        return requireContext()
+    }
 
-        /*
-        var tv = binding.uvTestTv
-        when(spinner.selectedItem){
-            "Velg Aktivitet"-> spinnerverdi = 0
-            "Bytur"         -> spinnerverdi = 4
-            "Parken"        -> spinnerverdi = 1
-            "Fjelltur"      -> spinnerverdi = 2
-            "Stranda"       -> spinnerverdi = 0
-        }
-
-         */
-        // max score 12 - 4+4+4
-        // Ikke ulik verdi for faktorene
-        beskyttelseScore = seekBar1ValueRegning.toInt()
-
-        // max beskyttelseScore 12
-        // when eller if (>/<)
-
+    fun save(){
         //Toogles
         val fjell: ToggleButton = binding.fjell
         val snoo: ToggleButton = binding.snoo
         val sand: ToggleButton = binding.sand
         val vann: ToggleButton = binding.vann
 
-        if(fjell.isChecked) {
-            beskyttelseScore -= 10
-        }
-        if(snoo.isChecked) {
-            beskyttelseScore -= 10
-        }
-        if(sand.isChecked) {
-            beskyttelseScore -= 10
-        }
-        if(vann.isChecked) {
-            beskyttelseScore -= 10
-        }
-        homeViewModel._beskyttelsesScore.value = beskyttelseScore
         Log.d("BeskyttelseScore", beskyttelseScore.toString())
         sharedPreferencesUser.setSliderValue(seekBar1Value.progress,requireContext())
         sharedPreferencesUser.setTooglesValue(fjell.isChecked, 1, requireContext())

@@ -1,49 +1,26 @@
 package com.example.appen.ui.Home
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.media.Image
-import android.os.Build
 import Uv
 import android.app.Activity
+import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.health.TimerStat
 import android.preference.PreferenceManager
 import android.util.Log
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.RemoteViews
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.isVisible
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.appen.MainActivity
 import com.example.appen.R
-import com.example.appen.ui.Home.Notification.Companion.hideTimerNotification
-import kotlinx.coroutines.Dispatchers
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar
-import okhttp3.Dispatcher
-import java.util.*
-import java.util.prefs.Preferences
-import android.app.Notification as Notification
 import com.github.mikephil.charting.charts.ScatterChart
 import com.github.mikephil.charting.components.AxisBase
-import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
@@ -55,9 +32,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
-
-
-
 
 class HomeFragment : Fragment() {
     // When requested, this adapter returns a DemoObjectFragment,
@@ -156,6 +130,7 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
                                     Log.d("UpdateUI", uvobjekt!!.properties.timeseries.toString())
                                     simpleDisp.updateUi(innUv)
                                     simpleDisp.updatePlot(innUv)
+                                    simpleDisp.kalkuler()
                                 }
                             }
                         }
@@ -279,8 +254,6 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     fun updateUi (innUv : Uv){
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        var main = activity as MainActivity?
         val simpleDateFormat = SimpleDateFormat("HH")
         val currentDateAndTime: String = simpleDateFormat.format(Date())
 
@@ -291,8 +264,8 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val clock = time[1].split(":")
             val hour = clock[0]
             if (hour.toInt() == currentDateAndTime.toInt() ){
-                //Log.d("Uv for nå", i.toString())
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                Log.d("Uv for nå", uvTime.toString())
                 updateIcons(uvTime)
                 Log.d("HEI1", tv.text.toString())
                 Log.d("HEI2", uvTime.toString())
@@ -301,14 +274,38 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
                 break
             }
         }
-        homeViewModel._beskyttelsesScore.observe(viewLifecycleOwner){
-            anbefaling(it)
-        }
 
     }
 
+    fun kalkuler() {
+        var seekBar1ValueRegning = sharedPreferencesUser.getSliderValue(requireContext())
+        seekBar1ValueRegning = seekBar1ValueRegning+1
+        val seekBar1ValueRegningDouble : Double = seekBar1ValueRegning * 16.67
+
+        var beskyttelseScore = seekBar1ValueRegningDouble.toInt()
+
+        val fjell = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
+        val snoo = sharedPreferencesUser.getTooglesValue(requireContext(), 2)
+        val sand = sharedPreferencesUser.getTooglesValue(requireContext(), 3)
+        val vann = sharedPreferencesUser.getTooglesValue(requireContext(), 4)
+
+        if(fjell) {
+            beskyttelseScore -= 10
+        }
+        if(snoo) {
+            beskyttelseScore -= 10
+        }
+        if(sand) {
+            beskyttelseScore -= 10
+        }
+        if(vann) {
+            beskyttelseScore -= 10
+        }
+        Log.d("noe besky", beskyttelseScore.toString())
+        anbefaling(beskyttelseScore)
+    }
+
     fun anbefaling(beskyttelse: Int) {
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         when(uvTime){
             in 0.0F..2.0F     -> anbefalSpf(6)
 
@@ -357,15 +354,46 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
     fun updateIcons(uvTime : Float){
         Log.d("noe", uvTime.toString())
+        val imgGlasses: ImageView = simple.findViewById(R.id.glassesImg)
+        val imgSunscreen: ImageView = simple.findViewById(R.id.sunscreenImg)
+        val imgCap: ImageView = simple.findViewById(R.id.capImg)
+        val imgClothes: ImageView = simple.findViewById(R.id.clothesImg)
+        val imgShade: ImageView = simple.findViewById(R.id.shadeImg)
+
+        imgGlasses.isVisible = true
+        imgSunscreen.isVisible = true
+        imgCap.isVisible = true
+        imgClothes.isVisible = true
+        imgShade.isVisible = true
 
         if (0 <= uvTime && uvTime <= 2.4){
             Log.d("show one icon", "Glasses")
+            imgGlasses.isVisible = true
+            imgSunscreen.isVisible = false
+            imgCap.isVisible = false
+            imgClothes.isVisible = false
+            imgShade.isVisible = false
         } else if (2.5 <= uvTime && uvTime <= 5.4){
             Log.d("show two icons", "Glasses, Sunscreen")
+            imgGlasses.isVisible = true
+            imgSunscreen.isVisible = true
+            imgCap.isVisible = false
+            imgClothes.isVisible = false
+            imgShade.isVisible = false
         } else if (5.5 <= uvTime && uvTime <= 7.4){
             Log.d("show three icons", "Glasses, Sunscreen, Cap")
+            imgGlasses.isVisible = true
+            imgSunscreen.isVisible = true
+            imgCap.isVisible = true
+            imgClothes.isVisible = false
+            imgShade.isVisible = false
         } else if (7.5 <= uvTime && uvTime <= 10.4){
             Log.d("show four icons", "Glasses, Sunscreen, Cap, Clothes")
+            imgGlasses.isVisible = true
+            imgSunscreen.isVisible = true
+            imgCap.isVisible = true
+            imgClothes.isVisible = true
+            imgShade.isVisible = false
         } else {
             Log.d("show five icons", "Glasses, Sunscreen, Cap, Clothes, Shade")
         }
