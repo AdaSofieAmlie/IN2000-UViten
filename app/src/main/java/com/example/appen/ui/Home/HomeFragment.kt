@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -240,7 +241,9 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val hour = time[1].split(":")[0].toFloat()
             val uv = timeseries[i].data.instant.details.ultraviolet_index_clear_sky.toFloat()
             if (uv.roundToInt()>yAxisMaxVisible) yAxisMaxVisible = uv.roundToInt()
-            entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()))
+            // endre ikon her:
+            val icon = getDrawable(requireContext(), R.drawable.sunone5)
+            entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()).also { it.icon = icon })
             next12Hours.add(hour.toInt())
             Log.d("Added to index: ", next12Hours[i].toString())
         }
