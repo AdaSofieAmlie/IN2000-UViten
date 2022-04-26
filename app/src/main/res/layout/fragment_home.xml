@@ -4,12 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     tools:context=".ui.Home.HomeFragment">
+
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="411dp"
+        android:layout_height="629dp">
+
     </androidx.viewpager2.widget.ViewPager2>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="233dp"
+        android:layout_height="49dp"
+        android:layout_margin="12dp"
+        android:background="#C9FFFFFF"
+        android:elevation="15dp"
+        app:cardCornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.500"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.951"
+        app:strokeColor="#C4FF6329"
+        app:strokeWidth="1dp"
+        >
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:elevation="15dp" />
+    </com.google.android.material.card.MaterialCardView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

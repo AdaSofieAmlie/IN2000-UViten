@@ -49,19 +49,22 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.ScatterData
 import com.github.mikephil.charting.data.ScatterDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
-    var uvObjekt: Uv? = null
+
 
 
 class HomeFragment : Fragment() {
     // When requested, this adapter returns a DemoObjectFragment,
     // representing an object in the collection.
+    var uvObjekt: Uv? = null
     private lateinit var demoCollectionAdapter: HomeCollectionAdapter
-    private lateinit var viewPager: ViewPager2
+    lateinit var viewPager: ViewPager2
     var uvTime: Float = 0.0F
     lateinit var tvBinding: View
 
@@ -84,6 +87,18 @@ class HomeFragment : Fragment() {
         demoCollectionAdapter = HomeCollectionAdapter(this)
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = demoCollectionAdapter
+        viewPager.isUserInputEnabled = false
+
+        val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
+        TabLayoutMediator(tabLayout, view.findViewById(R.id.pager)) { tab, position ->
+            tab.text = "Tab ${(position + 1)}"
+        }.attach()
+
+        val tab = tabLayout.getTabAt(1)
+        if (tab != null) {
+            tab.select()
+        }
+
         val tv = tvBinding.findViewById<TextView>(R.id.tvSimple)
         val activity: Activity? = activity
         if (activity is MainActivity) {
@@ -102,17 +117,22 @@ class HomeFragment : Fragment() {
 
 class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = 2
+    override fun getItemCount(): Int = 3
 
     private var uvobjekt: Uv? = null
+    private var info = InfoDisplayFragment()
     private var simple = SimpleDisplayFragment(uvobjekt)
     private var advanced = AdvancedDisplayFragment()
 
     override fun createFragment(position: Int): Fragment {
         // Return a NEW fragment instance in createFragment(int)
-        if (position==0) {
+        if (position==1) {
             simple = SimpleDisplayFragment(uvobjekt)
             return simple
+        }
+        if (position==2) {
+            info = InfoDisplayFragment()
+            return info
         }
         else {
             advanced = AdvancedDisplayFragment()
@@ -387,6 +407,33 @@ class AdvancedDisplayFragment : Fragment() {
     }
 }
 
+//INFOOOOOOOOOOOO
+class InfoDisplayFragment : Fragment() {
+
+    lateinit var info: View
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        info = inflater.inflate(R.layout.fragment_info_display, container, false)
+
+
+        return info
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+}
+
 //TEST BRANCH
 
 class sharedPreferencesUser() {
@@ -426,3 +473,4 @@ class sharedPreferencesUser() {
         }
     }
 }
+
