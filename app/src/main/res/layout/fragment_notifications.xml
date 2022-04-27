@@ -9,172 +9,136 @@
     android:gravity="center_horizontal"
     >
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        >
+
+        <ImageView
+            android:id="@+id/profilImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_account_circle_100" />
+
+        <TextView
+            android:id="@+id/profilTvOverspinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="TextView"
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/profilImageView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_account_circle_100" />
-
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
             <TextView
-                android:id="@+id/profilTvOverspinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textSize="15dp" />
-
-
-            <SeekBar
-                android:id="@+id/profilSeekBar"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:max="5"
-                android:progress="0"
-                android:tooltipText="Hvor lett blir du solbrent?"
-                />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-
-                <ToggleButton
-                    android:id="@+id/snoo"
-                    android:layout_width="70dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:textOff="Snø"
-                    android:textOn="Snø" />
-
-                <ToggleButton
-                    android:id="@+id/fjell"
-                    android:layout_width="70dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:textOff="Fjell"
-                    android:textOn="Fjell"/>
-
-                <ToggleButton
-                    android:id="@+id/sand"
-                    android:layout_width="70dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:textOff="Sand"
-                    android:textOn="Sand"/>
-
-                <ToggleButton
-                    android:id="@+id/vann"
-                    android:layout_width="70dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10dp"
-                    android:textOff="Vann"
-                    android:textOn="Vann"/>
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/profilLagre"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Lagre" />
-
-            <TextView
-                android:id="@+id/uvTestTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="Her kommer anbefaling"
-                android:textAlignment="center"
+                android:layout_marginEnd="140dp"
+                android:textStyle="bold"
+                android:text="UV sensitiv"
                 android:textSize="20sp"/>
 
-
-
             <TextView
-                android:id="@+id/profilFakta1"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="400dp"
-                android:layout_marginEnd="8dp"
-                android:text="Test1"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fakta2"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/fakta2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.433" />
-
-            <TextView
-                android:id="@+id/profilFakta2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="Test2"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fakta4"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/fakta4"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.56" />
-
-            <TextView
-                android:id="@+id/profilFakta3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="Test3"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fakta3"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="@+id/fakta3"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.494" />
-
-            <TextView
-                android:id="@+id/profilFakta4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="Test4"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.614" />
+                android:textStyle="bold"
+                android:text="UV resistent"
+                android:textSize="20sp"/>
 
         </LinearLayout>
-    </ScrollView>
+        <SeekBar
+            android:id="@+id/profilSeekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="300dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:max="5"
+            android:progress="0"
+            android:tooltipText="Hvor lett blir du solbrent?"
+            />
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@drawable/fitzscale__2_" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Hvordan er miljøet rundt deg?"
+            android:textSize="20sp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+
+            <ToggleButton
+                android:id="@+id/snoo"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:textOff="Snø"
+                android:textOn="Snø" />
+
+            <ToggleButton
+                android:id="@+id/fjell"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:textOff="Fjell"
+                android:textOn="Fjell"/>
+
+            <ToggleButton
+                android:id="@+id/sand"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:textOff="Sand"
+                android:textOn="Sand"/>
+
+            <ToggleButton
+                android:id="@+id/vann"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:textOff="Vann"
+                android:textOn="Vann"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/uvTestTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:hint="Psst! Husk å lagre!"
+            android:textAlignment="center"
+            android:textSize="15sp"
+            android:textStyle="italic"/>
+        <Button
+            android:id="@+id/profilLagre"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text="Lagre"
+            android:textStyle="bold"
+            android:textSize="30sp"/>
+
+
+    </LinearLayout>
 
 </LinearLayout>
