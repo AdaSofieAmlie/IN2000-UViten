@@ -242,7 +242,16 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val uv = timeseries[i].data.instant.details.ultraviolet_index_clear_sky.toFloat()
             if (uv.roundToInt()>yAxisMaxVisible) yAxisMaxVisible = uv.roundToInt()
             // endre ikon her:
-            val icon = getDrawable(requireContext(), R.drawable.sunone5)
+            var icon = getDrawable(requireContext(), R.drawable.sunone)
+            if (2.5 <= uv && uv <= 5.4) {
+                icon = getDrawable(requireContext(), R.drawable.suntwo)
+            }else if (5.5 <= uv && uv <= 7.4){
+                icon = getDrawable(requireContext(), R.drawable.sunthree)
+            } else if (7.5 <= uv && uv <= 10.4){
+                icon = getDrawable(requireContext(), R.drawable.sunfour)
+            } else if ( 10.5 <= uv){
+                icon = getDrawable(requireContext(), R.drawable.sunfive)
+            }
             entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()).also { it.icon = icon })
             next12Hours.add(hour.toInt())
             Log.d("Added to index: ", next12Hours[i].toString())
@@ -414,7 +423,7 @@ class AdvancedDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         advanced = inflater.inflate(R.layout.fragment_advanced_display, container, false)
-        timerObject = Timer(advanced).settUpTimer(6)       //6 sec
+        timerObject = Timer(advanced).settUpTimer(7200)       //2 hours
 
         return advanced
     }
