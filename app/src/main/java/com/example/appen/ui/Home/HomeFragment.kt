@@ -237,7 +237,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val geocode = Geocoding.fromJson(returnString)
             if (geocode != null) {
                 requireActivity().runOnUiThread {
-                    locTv.text = geocode.locality + ", " + geocode.countryName
+                    locTv.text = geocode.locality + ", " + geocode.city
                 }
             }
 
