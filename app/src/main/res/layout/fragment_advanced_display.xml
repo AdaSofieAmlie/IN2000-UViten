@@ -6,10 +6,16 @@
 
     <TextView
         android:id="@+id/tvAdvanced"
-        android:text="Timer"
-        android:textSize="40sp"
+        android:text="@string/description"
+        android:textSize="20sp"
+        android:textAlignment="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        />
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -21,7 +27,7 @@
 
         <TextView
             android:id="@+id/tvDigitalTime"
-            android:textSize="40sp"
+            android:textSize="35sp"
             android:text="Noe"
             android:textAlignment="center"
             android:layout_width="match_parent"
@@ -32,21 +38,21 @@
 
         <me.zhanghai.android.materialprogressbar.MaterialProgressBar
             android:id="@+id/progress_circular"
-            android:minWidth="300dp"
-            android:minHeight="300dp"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:minWidth="250dp"
+            android:minHeight="250dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayoutButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -85,6 +91,21 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvTimerExpired"
+        android:textSize="20sp"
+        android:text=""
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutButtons"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        />
 
 
 

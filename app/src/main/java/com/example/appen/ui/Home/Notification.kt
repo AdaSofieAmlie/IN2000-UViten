@@ -6,19 +6,18 @@ import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
-import android.graphics.BlurMaskFilter
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.example.appen.MainActivity
 import com.example.appen.R
 import io.ktor.http.*
 import java.util.*
-import java.util.Timer
+
 
 class Notification {
 
@@ -39,9 +38,17 @@ class Notification {
             val notificationBuilder = getBasicNotification(context, channelIdTimer, true)
             val pendingIntent = PendingIntent.getActivity(context, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            notificationBuilder.setContentTitle("Timer expired")
+            val icon = BitmapFactory.decodeResource(
+                context.resources,
+                R.drawable.ic_round_wb_sun_24
+            )
+
+            notificationBuilder.setContentTitle("Remeber to reapply your sunscreen!")
                 .setContentText("Timer expired at: $timerExpiredAt")
                 .setContentIntent(pendingIntent)
+                .setLargeIcon(icon)
+                .setSmallIcon(R.drawable.ic_round_wb_sun_24)
+            notificationBuilder.color = 0xFF6329
 
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channelIdTimer, channelNameTimer, true)

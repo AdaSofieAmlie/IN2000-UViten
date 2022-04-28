@@ -6,9 +6,14 @@
     <string name="mapbox_access_token">pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q</string>
 
 
+    //Timer buttons
     <string name="startButton">Start</string>
     <string name="pauseButton">Pause</string>
     <string name="stopButton">Stop</string>
+    //Timer description
+    <string name="description">Start this timer after you have applied sunscreen, to keep track of when you need to reapply your sunscreen. </string>
+
+
 
     //icons
     <string name="glasses">Beskytt øynene dine</string>
@@ -24,4 +29,5 @@
         <item>Bytur</item>
         <item>Parken</item>
     </string-array>
+
 </resources>

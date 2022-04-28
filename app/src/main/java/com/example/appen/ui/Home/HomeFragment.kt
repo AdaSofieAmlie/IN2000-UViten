@@ -242,7 +242,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         }
         catch (exception: Exception) {
             println("A network request exception was thrown: ${exception.message}")
-            locTv.text = "Fant ikke"
+            //locTv.text = "Fant ikke"
         }
     }
 
