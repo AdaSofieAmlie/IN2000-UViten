@@ -17,7 +17,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="233dp"
-        android:layout_height="49dp"
+        android:layout_height="wrap_content"
         android:layout_margin="12dp"
         android:background="#C9FFFFFF"
         android:elevation="15dp"
@@ -35,7 +35,7 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:background="#FFFFFF"
             android:elevation="15dp" />
     </com.google.android.material.card.MaterialCardView>

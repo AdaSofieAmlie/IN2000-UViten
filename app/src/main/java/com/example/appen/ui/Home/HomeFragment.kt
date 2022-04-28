@@ -1,5 +1,6 @@
 package com.example.appen.ui.Home
 
+import Pos
 import Uv
 import android.app.Activity
 import android.content.Context
@@ -15,9 +16,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import codebeautify.Geocoding
 import com.example.appen.MainActivity
 import com.example.appen.R
 import com.github.mikephil.charting.charts.ScatterChart
@@ -29,10 +30,19 @@ import com.github.mikephil.charting.data.ScatterDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
+
 
 class HomeFragment : Fragment() {
     // When requested, this adapter returns a DemoObjectFragment,
@@ -69,12 +79,22 @@ class HomeFragment : Fragment() {
             tab.text = "Tab ${(position + 1)}"
         }.attach()
 
+        tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_baseline_timer_24)
+        tabLayout.getTabAt(0)?.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_UNLABELED)
+        tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_round_wb_sun_24)
+        tabLayout.getTabAt(1)?.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_UNLABELED)
+        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_baseline_info_24)
+        tabLayout.getTabAt(2)?.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_UNLABELED)
+
+
         val tab = tabLayout.getTabAt(1)
         if (tab != null) {
             tab.select()
         }
 
-        val tv = tvBinding.findViewById<TextView>(R.id.tvSimple)
+
+
+        val tv = tvBinding.findViewById<TextView>(R.id.uvTv)
         val activity: Activity? = activity
         if (activity is MainActivity) {
             main = activity
@@ -171,6 +191,9 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     lateinit var tv: TextView
+    lateinit var anbTv: TextView
+    lateinit var tempTv: TextView
+    lateinit var locTv: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -179,6 +202,34 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     ): View {
         simple = inflater.inflate(R.layout.fragment_simple_display, container, false)
         return simple
+    }
+
+    suspend fun setLoc(pos: Pos) {
+
+        try {
+            val client = HttpClient() {
+                install(JsonFeature) {
+                    acceptContentTypes = acceptContentTypes + ContentType.Any
+                }
+                install(UserAgent) {
+                    agent = "uio.no snorre@wenaas.org"
+                }
+            }
+
+            val url: URL = URL("https://nominatim.openstreetmap.org/reverse?format=geojson&lat=59&lon=10")
+            val returnString: String = client.get(url)
+            val geocode = Geocoding.fromJson(returnString)
+            if (geocode != null) {
+                locTv.text = geocode.features[0].properties.address.city
+            }
+
+
+
+        }
+        catch (exception: Exception) {
+            println("A network request exception was thrown: ${exception.message}")
+            locTv.text = "Fant ikke"
+        }
     }
 
     fun initializePlot (){
@@ -269,7 +320,14 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         val simpleDateFormat = SimpleDateFormat("HH")
         val currentDateAndTime: String = simpleDateFormat.format(Date())
 
-        tv = simple.findViewById<TextView>(R.id.tvSimple)
+        tv = simple.findViewById<TextView>(R.id.uvTv)
+        anbTv = simple.findViewById<TextView>(R.id.anbefaling)
+        tempTv = simple.findViewById<TextView>(R.id.tempTv)
+        locTv = simple.findViewById<TextView>(R.id.posTv)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            setLoc(Pos(0,0F,0F))
+        }
 
         for (i in innUv.properties.timeseries){
             val time = i.time.split("T")
@@ -277,12 +335,14 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val hour = clock[0]
             if (hour.toInt() == currentDateAndTime.toInt() ){
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                val tempTime = i.data.instant.details.air_temperature.toFloat()
                 Log.d("Uv for nå", uvTime.toString())
                 updateIcons(uvTime)
                 Log.d("HEI1", tv.text.toString())
                 Log.d("HEI2", uvTime.toString())
                 innUv.uvTime = uvTime
-                tv.text = uvTime.toString()
+                tv.text = "\nUV:\n" + uvTime.toString()
+                tempTv.text = "\nTemp:\n" + tempTime.toString() + "C"
                 break
             }
         }
@@ -360,7 +420,8 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     fun anbefalSpf(spf: Int){
-        tv.text = "Anbefaler Spf " + spf
+        //tv.text = "Anbefaler Spf " + spf
+        anbTv.text = spf.toString()
         //Test
     }
 
