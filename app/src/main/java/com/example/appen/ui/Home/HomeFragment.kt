@@ -57,6 +57,20 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        val tabLayout = view?.findViewById<TabLayout>(R.id.tab_layout)
+        var tab = tabLayout?.getTabAt(0)
+        if (tab != null) {
+            tab.select()
+        }
+        tab = tabLayout?.getTabAt(1)
+        if (tab != null) {
+            tab.select()
+        }
+        Log.d("resume", "OnResume!!!!!")
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         var main = activity as MainActivity?
         demoCollectionAdapter = HomeCollectionAdapter(this)
@@ -423,14 +437,14 @@ class AdvancedDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         advanced = inflater.inflate(R.layout.fragment_advanced_display, container, false)
-        timerObject = Timer(advanced).settUpTimer(7200)       //2 hours
-
+        timerObject = Timer(advanced).settUpTimer(7)       //2 hours = 7200
+        Log.d("On", "onCreateView")
         return advanced
     }
 
     override fun onPause() {
         super.onPause()
-
+        Log.d("PAUSE", "pasue")
         if (sharedPreferences.getTimeState(advanced.context) == Timer.TimeState.running) {
             val wakeUpTime = timerObject.onPauseStartBackgroundTimer()
         }
@@ -439,9 +453,14 @@ class AdvancedDisplayFragment : Fragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        
+    }
+
     override fun onResume() {
         super.onResume()
-        timerObject.startButtons()
+        Log.d("onResume", timerObject.timeState.toString())
         timerObject.initTimer()
         Timer.removeAlarm(advanced.context)
     }
