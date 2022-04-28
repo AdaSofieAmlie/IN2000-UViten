@@ -16,6 +16,7 @@
     <string name="cap">Beskytt hodeskallen din</string>
     <string name="clothes">Beskytt kroppen din med klær</string>
     <string name="shade">Hold deg i skyggen</string>
+    <string name="imgview">imgView</string>
 
     <string-array name="spinner_profil">
         <item>Velg Aktivitet</item>
