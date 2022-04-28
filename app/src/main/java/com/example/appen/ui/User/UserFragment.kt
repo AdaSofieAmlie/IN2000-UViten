@@ -1,21 +1,45 @@
 package com.example.appen.ui.User
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.appen.R
 import com.example.appen.databinding.FragmentNotificationsBinding
+import Uv
+import android.content.Context
+import android.util.Log
+import androidx.core.content.ContentProviderCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.example.appen.Location
+import com.example.appen.MainActivity
+import com.example.appen.ui.Home.HomeViewModel
+import com.example.appen.ui.Home.sharedPreferencesUser
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.log
 
-class UserFragment : Fragment() {
+class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private var _binding: FragmentNotificationsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    var location = activity as Location?
+
+    //Score
+    var beskyttelseScore = 0
+    //aktivitet
+    lateinit var spinner: Spinner
+    //hudtype
+    lateinit var seekBar1Value: SeekBar
+    //lagreKnapp
+    lateinit var lagre : Button
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,15 +52,79 @@ class UserFragment : Fragment() {
         _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textNotifications
+        val textView: TextView = binding.profilTvOverspinner
         notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+            textView.text = "Juster informasjonen så den passer deg!"
+        }
+        lagre = binding.profilLagre
+        lagre.setOnClickListener{
+
+            save()
+
         }
         return root
+    }
+
+    companion object{
+        val user = this
+    }
+
+    override fun onResume() {
+        super.onResume()
+        seekBar1Value = binding.profilSeekBar
+        val fjell: ToggleButton = binding.fjell
+        val snoo: ToggleButton = binding.snoo
+        val sand: ToggleButton = binding.sand
+        val vann: ToggleButton = binding.vann
+        seekBar1Value.progress = sharedPreferencesUser.getSliderValue(requireContext())
+        fjell.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
+        snoo.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 2)
+        sand.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 3)
+        vann.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 4)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        TODO("Not yet implemented")
+    }
+
+    fun onProgressChanged(seek: SeekBar,
+                                    progress: Int, fromUser: Boolean) {
+        // write custom code for progress is changed
+    }
+
+    fun onStartTrackingTouch(seek: SeekBar) {
+        // write custom code for progress is started
+    }
+
+    fun onStopTrackingTouch(seek: SeekBar) {
+        // write custom code for progress is stopped
+    }
+
+    fun fetchContext() : Context {
+        return requireContext()
+    }
+
+    fun save(){
+        //Toogles
+        val fjell: ToggleButton = binding.fjell
+        val snoo: ToggleButton = binding.snoo
+        val sand: ToggleButton = binding.sand
+        val vann: ToggleButton = binding.vann
+
+        Log.d("BeskyttelseScore", beskyttelseScore.toString())
+        sharedPreferencesUser.setSliderValue(seekBar1Value.progress,requireContext())
+        sharedPreferencesUser.setTooglesValue(fjell.isChecked, 1, requireContext())
+        sharedPreferencesUser.setTooglesValue(snoo.isChecked, 2, requireContext())
+        sharedPreferencesUser.setTooglesValue(sand.isChecked, 3, requireContext())
+        sharedPreferencesUser.setTooglesValue(vann.isChecked, 4, requireContext())
     }
 }

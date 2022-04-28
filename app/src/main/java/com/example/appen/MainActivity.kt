@@ -1,5 +1,6 @@
 package com.example.appen
 
+import Uv
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -132,6 +133,8 @@ class MainActivity : AppCompatActivity() {
     fun getMet(): ViewModelMet {
         return viewModelMet
     }
+
+
 
 
 }

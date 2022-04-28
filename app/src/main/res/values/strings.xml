@@ -4,4 +4,24 @@
     <string name="title_map">Kart</string>
     <string name="title_profile">Profil</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q</string>
+
+
+    <string name="startButton">Start</string>
+    <string name="pauseButton">Pause</string>
+    <string name="stopButton">Stop</string>
+
+    //icons
+    <string name="glasses">Beskytt øynene dine</string>
+    <string name="sunscreen">Bruk solkrem</string>
+    <string name="cap">Beskytt hodeskallen din</string>
+    <string name="clothes">Beskytt kroppen din med klær</string>
+    <string name="shade">Hold deg i skyggen</string>
+
+    <string-array name="spinner_profil">
+        <item>Velg Aktivitet</item>
+        <item>Stranda</item>
+        <item>Fjelltur</item>
+        <item>Bytur</item>
+        <item>Parken</item>
+    </string-array>
 </resources>
