@@ -47,6 +47,8 @@ import kotlin.math.roundToInt
 class HomeFragment : Fragment() {
     // When requested, this adapter returns a DemoObjectFragment,
     // representing an object in the collection.
+
+    lateinit var main: MainActivity
     var uvObjekt: Uv? = null
     private lateinit var demoCollectionAdapter: HomeCollectionAdapter
     lateinit var viewPager: ViewPager2
@@ -82,7 +84,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        var main = activity as MainActivity?
+        main = activity as MainActivity
         demoCollectionAdapter = HomeCollectionAdapter(this)
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = demoCollectionAdapter
@@ -117,7 +119,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        main?.getMet()?.getUvPaaSted()?.observe(main){
+        main.getMet().getUvPaaSted().observe(main){
             uvObjekt = it
             demoCollectionAdapter.update(it, main)
         }
@@ -219,7 +221,6 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     suspend fun setLoc(pos: Pos) {
-
         try {
             val client = HttpClient() {
                 install(JsonFeature) {
@@ -230,11 +231,14 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
                 }
             }
 
-            val url: URL = URL("https://nominatim.openstreetmap.org/reverse?format=geojson&lat=59&lon=10")
+            val url: URL = URL("https://api.bigdatacloud.net/data/reverse-geocode?latitude="+ pos.lat+ "&longitude=" + pos.lon + "&localityLanguage=no&key=e7e4fdceb8514a458a8dc231f6222030")
             val returnString: String = client.get(url)
+            Log.d("Returnerer: ", returnString)
             val geocode = Geocoding.fromJson(returnString)
             if (geocode != null) {
-                locTv.text = geocode.features[0].properties.address.city
+                requireActivity().runOnUiThread {
+                    locTv.text = geocode.locality + ", " + geocode.countryName
+                }
             }
 
 
@@ -242,9 +246,12 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         }
         catch (exception: Exception) {
             println("A network request exception was thrown: ${exception.message}")
-            locTv.text = "Fant ikke"
+            requireActivity().runOnUiThread {
+                locTv.text = "Fant ikke posisjon..."
+            }
         }
     }
+
 
     fun initializePlot (){
         sc = simple.findViewById(R.id.SCchart)
@@ -340,7 +347,9 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         locTv = simple.findViewById<TextView>(R.id.posTv)
 
         CoroutineScope(Dispatchers.IO).launch {
-            setLoc(Pos(0,0F,0F))
+            val main = activity as MainActivity
+
+            setLoc(main.loc.position)
         }
 
         for (i in innUv.properties.timeseries){
