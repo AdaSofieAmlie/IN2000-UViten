@@ -1,6 +1,9 @@
 package com.example.appen.ui.Map
 
 //
+import Pos
+import Uv
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -15,14 +18,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import com.example.appen.MainActivity
 import com.example.appen.R
 import com.example.appen.databinding.FragmentMapBinding
 import com.mapbox.android.core.location.LocationEngineProvider
@@ -55,16 +64,31 @@ import com.mapbox.search.ui.view.feedback.SearchFeedbackBottomSheetView
 import com.mapbox.search.ui.view.place.SearchPlaceBottomSheetView
 import java.lang.ref.WeakReference
 import com.example.appen.SearchViewBottomSheetsMediator
+import com.example.appen.ViewModelMet
+import com.example.appen.databinding.ItemCalloutViewBinding
 import com.google.android.gms.maps.MapsInitializer.initialize
+import com.mapbox.mapboxsdk.utils.BitmapUtils
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.getSourceAs
+import com.mapbox.maps.plugin.gestures.OnMapClickListener
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
+import com.mapbox.maps.viewannotation.ViewAnnotationManager
+import com.mapbox.maps.viewannotation.viewAnnotationOptions
 import com.mapbox.search.ui.view.place.SearchPlace
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class MapFragment : Fragment(){ //OnMapReadyCallback
+class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
 
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
+    private val viewModelMet: ViewModelMet by viewModels()
+    var uvTime: Float = 0.0F
+
+    //To UV-pointer
+    lateinit var main:LifecycleOwner
+    //
 
     lateinit var mainView: View
     var mapOpened: Boolean = false
@@ -80,6 +104,8 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     private lateinit var feedbackBottomSheetView: SearchFeedbackBottomSheetView
 
     private lateinit var cardsMediator: SearchViewBottomSheetsMediator
+
+    private lateinit var viewAnnotationManager: ViewAnnotationManager
 
     private var markerCoordinates = mutableListOf<Point>()
 
@@ -129,16 +155,16 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
     ): View {
         Mapbox.getInstance(this.requireContext(), "pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q")
 
-
         val dashboardViewModel =
             ViewModelProvider(this).get(MapViewModel::class.java)
-
-
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
+        //OnMapClick
+        //add a blue marker view to a drawable then
+        viewAnnotationManager = binding.mapView.viewAnnotationManager
+        //OnMapClick
 
         val textView: TextView = binding.textDashboard
         dashboardViewModel.text.observe(viewLifecycleOwner) {
@@ -148,7 +174,9 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
 
 
-        mapboxMap = binding.mapView.getMapboxMap()
+        mapboxMap = binding.mapView.getMapboxMap().apply {
+            addOnMapClickListener(this@MapFragment)
+        }
 
         mapboxMap.loadStyle(
             style(styleUri = getMapStyleUri()) {
@@ -172,27 +200,18 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         )
 
 
-
         mapView
         locationPermissionHelper = LocationPermissionHelper(WeakReference(activity))
         locationPermissionHelper.checkPermissions {
             onMapReady()
         }
 
-        //SEARCH
-
-
-
-
-        /*
-
-         */
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        main = (activity as MainActivity?)!!
 
         searchBottomSheetView = binding.searchView
         searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
@@ -251,6 +270,8 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
         })
 
     }
+    //Endringer herfra - Med OnMapClick
+
 
     private fun onMapReady() {
         mapView.getMapboxMap().setCamera(
@@ -492,6 +513,59 @@ class MapFragment : Fragment(){ //OnMapReadyCallback
 
         fun dpToPx(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
+        }
+        //MapClick
+        const val SELECTED_ADD_COEF_PX = 25
+        const val STARTUP_TEXT = "Click on a map to add a view annotation."
+    }
+
+    override fun onMapClick(point: Point): Boolean {
+        addViewAnnotation(point)
+        return true
+    }
+    lateinit var tvText:TextView
+    private fun addViewAnnotation(point: Point) {
+        val viewAnnotation = viewAnnotationManager.addViewAnnotation(
+            resId = R.layout.item_callout_view,
+            options = viewAnnotationOptions {
+                geometry(point)
+                allowOverlap(true)
+            }
+        )
+        ItemCalloutViewBinding.bind(viewAnnotation).apply {
+
+            var position = Pos(point.altitude().toInt(),point.latitude().toFloat(), point.longitude().toFloat())
+            viewModelMet.updatePositionMet(position)
+            viewModelMet.getUvPaaSted().observe(main) {
+                updateUi(it)
+            }
+
+
+            tvText = textNativeView
+
+            closeNativeView.setOnClickListener {
+                viewAnnotationManager.removeViewAnnotation(viewAnnotation)
+            }
+
+        }
+    }
+    fun updateUi (innUv : Uv){
+        val simpleDateFormat = SimpleDateFormat("HH")
+        val currentDateAndTime: String = simpleDateFormat.format(Date())
+
+        //val tv = simple.findViewById<TextView>(R.id.tvSimple)
+        val tv = R.layout.item_callout_view
+
+        for (i in innUv.properties.timeseries){
+            val time = i.time.split("T")
+            val clock = time[1].split(":")
+            val hour = clock[0]
+            if (hour.toInt() == currentDateAndTime.toInt() ){
+                //Log.d("Uv for nå", i.toString())
+                uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                tvText.text = uvTime.toString()
+                break
+            }
         }
     }
 }
