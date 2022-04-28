@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.CountDownTimer
 import android.os.Handler
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -66,36 +67,34 @@ class Timer (advancedIn : View) {
 
     }
 
-    fun startButtons(){
-        buttonStart.isEnabled = false
-        buttonPause.isEnabled = false
-        buttonStop.isEnabled = false
-    }
+
 
     fun settUpTimer(tid : Long) : Timer{
         tvTimer = advanced.findViewById(R.id.tvDigitalTime)
         progress = advanced.findViewById(R.id.progress_circular)
         progress.visibility = View.VISIBLE
-
+        sharedPreferences.setTimerLengthSeconds(tid, advanced.context)
+        timerLengthInSeconds = tid
         updateButtons()
 
-        val savedTime= sharedPreferences.getTimerLengthSeconds(advanced.context)
+        val savedTime = sharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
+        Log.d("SavedTime", savedTime.toString())
         if ( savedTime == 0L){
-            timerLengthInSeconds = tid
             timeState = TimeState.stopped
             sharedPreferences.setTimerLengthSecondsRemaining(timerLengthInSeconds, advanced.context)
         } else {
             secondsRemaining = savedTime
             timeState = sharedPreferences.getTimeState(advanced.context)
             sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+            Log.d("s", secondsRemaining.toString())
         }
-        sharedPreferences.setTimerLengthSeconds(tid, advanced.context)
 
         sharedPreferences.setTimeState(timeState, advanced.context)
         progress.max = timerLengthInSeconds.toInt()
 
 
         buttonStart.setOnClickListener{
+            buttonStop.text = "STOP"
             startTimer()
             timeState = TimeState.running
             sharedPreferences.setTimeState(timeState, advanced.context)
@@ -112,7 +111,10 @@ class Timer (advancedIn : View) {
             stopTimer()
             timeState = TimeState.stopped
             updateButtons()
+            updateTimerUI()
         }
+
+        updateTimerUI()
 
         return this
     }
@@ -127,10 +129,10 @@ class Timer (advancedIn : View) {
             setPrviousTimerLength()
         }
 
-        secondsRemaining =
-            if (timeState == TimeState.running || timeState == TimeState.paused) {
-                sharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
-            } else { sharedPreferences.getTimerLengthSeconds(advanced.context) }
+        if (timeState == TimeState.running || timeState == TimeState.paused) {
+            secondsRemaining = sharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
+        } else {
+            secondsRemaining = sharedPreferences.getTimerLengthSeconds(advanced.context) }
 
         val alarmSetTime = sharedPreferences.getAlarmSetTime(advanced.context)
         removeAlarm(advanced.context)
@@ -139,6 +141,7 @@ class Timer (advancedIn : View) {
             val minus = (nowSeconds - alarmSetTime ) / 1000
             secondsRemaining -= minus
         }
+        Log.d("Tid", secondsRemaining.toString())
 
         if (secondsRemaining <= 0){
             timer.cancel()
@@ -147,13 +150,13 @@ class Timer (advancedIn : View) {
         }
         updateButtons()
         updateTimerUI()
+        sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
     }
 
     fun setNewTimerLength(){
         val lengthInMinutes = sharedPreferences.getTimerLengthSeconds(advanced.context)
-        timerLengthInSeconds = lengthInMinutes
-        progress.max = timerLengthInSeconds.toInt()
-        settUpTimer(timerLengthInSeconds)
+        progress.max = lengthInMinutes.toInt()
+        settUpTimer(lengthInMinutes)
     }
 
     fun setPrviousTimerLength(){
@@ -163,11 +166,16 @@ class Timer (advancedIn : View) {
 
     fun startTimer(){
         Notification.hideTimerNotification(advanced.context)
+        Log.d("Sec", secondsRemaining.toString())
+        progress.max = sharedPreferences.getTimerLengthSeconds(advanced.context).toInt()
 
-        if (timeState == TimeState.paused){
-            setPrviousTimerLength()
+        if (secondsRemaining == 0L){
+            secondsRemaining = sharedPreferences.getTimerLengthSeconds(advanced.context)
+            Log.d("Sec", secondsRemaining.toString())
         }
+
         timeState = TimeState.running
+
         sharedPreferences.setTimeState(timeState, advanced.context)
         progress.progress = secondsRemaining.toInt()
         timer = object : CountDownTimer(secondsRemaining * 1000, 1000) {
@@ -180,9 +188,10 @@ class Timer (advancedIn : View) {
 
             override fun onFinish() {
                 stopTimer()
+                buttonStop.text = "Restart"
+                buttonPause.isEnabled = false
                 Notification.showTimerExpired(advanced.context)
             }
-
         }.start()
     }
 
@@ -191,11 +200,16 @@ class Timer (advancedIn : View) {
         sharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
         sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
         sharedPreferences.setTimeState(timeState, advanced.context)
+        Log.d("pause", "P")
         timer.cancel()
     }
 
     fun stopTimer() {
-        timer.cancel()
+        if (timeState != TimeState.paused){
+            timer.cancel()
+            sharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
+        }
+
         timeState = TimeState.stopped
         setNewTimerLength()
 
@@ -205,9 +219,10 @@ class Timer (advancedIn : View) {
         sharedPreferences.setTimeState(timeState, advanced.context)
         sharedPreferences.setTimerLengthSecondsRemaining(timerLengthInSeconds, advanced.context)
         secondsRemaining = timerLengthInSeconds
+        Log.d("timerlengthInSec", timerLengthInSeconds.toString())
 
         updateButtons()
-        updateTimerUI()
+
 
     }
 
@@ -220,7 +235,7 @@ class Timer (advancedIn : View) {
         timeRemaining = timeRemaining - minutesUntilFinsished * 60
         val secondsInMinutesUntilFinished = timeRemaining
         val timeStr = secondsInMinutesUntilFinished.toString()
-        progress.progress = secondsRemaining.toInt()
+        progress.progress = timeRemaining.toInt()
 
         var stringTimer = hoursUntilFinished.toString()
         stringTimer += ":"
