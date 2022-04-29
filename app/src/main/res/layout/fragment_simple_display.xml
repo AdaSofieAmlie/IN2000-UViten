@@ -115,6 +115,8 @@
 
         <ImageView
             android:id="@+id/glassesImg"
+            android:background="@drawable/round_iconview"
+            android:padding="3dp"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -125,6 +127,8 @@
 
         <ImageView
             android:id="@+id/sunscreenImg"
+            android:background="@drawable/round_iconview"
+            android:padding="3dp"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -135,6 +139,8 @@
 
         <ImageView
             android:id="@+id/capImg"
+            android:background="@drawable/round_iconview"
+            android:padding="3dp"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -145,6 +151,8 @@
 
         <ImageView
             android:id="@+id/clothesImg"
+            android:background="@drawable/round_iconview"
+            android:padding="3dp"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -154,6 +162,8 @@
 
         <ImageView
             android:id="@+id/shadeImg"
+            android:background="@drawable/round_iconview"
+            android:padding="3dp"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
