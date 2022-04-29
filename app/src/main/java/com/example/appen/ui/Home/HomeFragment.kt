@@ -548,6 +548,7 @@ class InfoDisplayFragment : Fragment() {
     lateinit var knappTilbake : ImageButton
     lateinit var knappFremover : ImageButton
     lateinit var vissteduTV : TextView
+    lateinit var vissteduTVUndertest : TextView
     var plass : Int = 0
 
     override fun onCreateView(
@@ -565,8 +566,10 @@ class InfoDisplayFragment : Fragment() {
         knappFremover = info.findViewById(R.id.knappFremover)
         knappTilbake = info.findViewById(R.id.knappTilbake)
         vissteduTV = info.findViewById(R.id.infoSvar)
+        vissteduTVUndertest = info.findViewById(R.id.infoSvarUndertekst)
 
         vissteduTV.text = resources.getString(R.string.solbrentParasoll)
+        vissteduTVUndertest.text = resources.getString(R.string.solbrentParasollUndertekst)
 
         knappTilbake.setOnClickListener{
            frem_bak(false)
@@ -583,16 +586,54 @@ class InfoDisplayFragment : Fragment() {
             plass -= 1
         }
         when(plass){
-            0 -> {vissteduTV.text=resources.getString(R.string.solbrentParasoll)}
-            1 -> {vissteduTV.text=resources.getString(R.string.solVindu)}
-            2 -> {vissteduTV.text=resources.getString(R.string.hudFaktor)}
-            3 -> {vissteduTV.text=resources.getString(R.string.solskade)}
-            4 -> {vissteduTV.text=resources.getString(R.string.hudkreft)}
-            5 -> {vissteduTV.text=resources.getString(R.string.hudkreftNorge)}
-            6 -> {vissteduTV.text=resources.getString(R.string.dVitamin)}
-            7 -> {vissteduTV.text=resources.getString(R.string.solkremVinter)}
-            8 -> {vissteduTV.text=resources.getString(R.string.solbeskyttelse)}
-            9 -> {vissteduTV.text=resources.getString(R.string.solkremVoksen)}
+            0 -> {
+                vissteduTV.text=resources.getString(R.string.solbrentParasoll)
+                vissteduTVUndertest.text = resources.getString(R.string.solbrentParasollUndertekst)
+            }
+
+            1 -> {
+                vissteduTV.text=resources.getString(R.string.solVindu)
+                vissteduTVUndertest.text = resources.getString(R.string.solVinduUndertekst)
+
+            }
+            2 -> {
+                vissteduTV.text=resources.getString(R.string.hudFaktor)
+                vissteduTVUndertest.text = resources.getString(R.string.hudFaktorUndertekst)
+            }
+
+            3 -> {
+                vissteduTV.text=resources.getString(R.string.solskade)
+                vissteduTVUndertest.text = resources.getString(R.string.solskadeUndertekst)
+            }
+
+            4 -> {
+                vissteduTV.text=resources.getString(R.string.hudkreft)
+                vissteduTVUndertest.text = resources.getString(R.string.hudkreftUndertekst)
+            }
+
+            5 -> {
+                vissteduTV.text=resources.getString(R.string.hudkreftNorge)
+                vissteduTVUndertest.text = resources.getString(R.string.hudkreftNorgeUndertekst)
+            }
+
+            6 -> {
+                vissteduTV.text=resources.getString(R.string.dVitamin)
+                vissteduTVUndertest.text = resources.getString(R.string.dVitaminUndertekst)
+            }
+
+            7 -> {
+                vissteduTV.text=resources.getString(R.string.solkremVinter)
+                vissteduTVUndertest.text = resources.getString(R.string.solkremVinterUndertekst)
+            }
+            8 -> {
+                vissteduTV.text=resources.getString(R.string.solbeskyttelse)
+                vissteduTVUndertest.text = resources.getString(R.string.solbeskyttelseUndertekst)
+            }
+            9 -> {
+                vissteduTV.text=resources.getString(R.string.solkremVoksen)
+                vissteduTVUndertest.text = resources.getString(R.string.solkremVoksenUndertekst)
+            }
+
             -1 -> {plass = 9}
             10 -> {plass = 0}
         }
