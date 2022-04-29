@@ -24,4 +24,30 @@
         <item>Bytur</item>
         <item>Parken</item>
     </string-array>
+
+    <string-array name="visstedusvar">
+        <item>solbrentParasoll</item>
+        <item>solVindu</item>
+        <item>hudFaktor</item>
+        <item>solskade</item>
+        <item>hudkreft</item>
+        <item>hudkreftNorge</item>
+        <item>dVitamin</item>
+        <item>solkremVinter</item>
+        <item>solkremVoksen</item>
+        <item>solbeskyttelse</item>
+    </string-array>
+
+    //visste du svar
+    <string name="solbrentParasoll">..du kan bli solbrent under en parasoll? Parasoll skjermer veldig godt mot sola men du er 100 prosent beskyttet, for parasollen stopper bare de direkte strålene, men ikke dem som blir reflektert i overflater som vann eller sand.</string>
+    <string name="solVindu">..solstrålene kan trenge seg gjennom en vindusrute? Det er hovedsakelig UVB-strålene som gjør oss brune, og de kan stort sett ikke trenge gjennom glass. Det kan derimot UVA-strålene, som gir en kortvarig brunfarge.</string>
+    <string name="hudFaktor">..huden har en naturlig solfaktor? Jo mørkere du er fra naturens side, desto høyere er din naturlige solfaktor. Det samme gjelder hvis du har allerede har fått farge fra sola. Tidlig på sommeren er du derfor mer utsatt for å bli brent enn du er sent på sommeren, men da har du samtidig utsatt deg for en solskade.</string>
+    <string name="solskade">..du har fått en solskade når du har blitt brun? Når du får fregner eller blir solbrun, er det faktisk snakk om en solskade. For at du skal få en langvarig brunfarge, trenger UVB-strålene nemlig først ned i det øverste hudlaget og gjør huden rød og forbrent. Det skader hudcellene og øker risikoen for hudkreft, og derfor bør du holde det på et minimum.</string>
+    <string name="hudkreft">..hudkreft forårsakes i hovedsak av at ubeskyttet hud får UV-stråler på seg? Både enkeltepisoder med kraftig solforbrenning og samlet solbelastning gjennom livet er av betydning for utvikling av hudkreft.</string>
+    <string name="hudkreftNorge">..Norge er blant landene i verden som har stoerst forekomst av foeflekkreft (melanom)? Sol er bra for helsa i små mengder, men rundt 9 av 10 tilfeller av hudkreft i Norge har sammenheng med for mye intens sol og solarium. Melanom (foeflekkreft) er blant kreftformene som oeker mest i Norge.</string>
+    <string name="dVitamin">..Sola er vår viktigste kilde til vitamin D? Når solstrålene treffer huden dannes vitamin D, som er spesielt viktig for bein-bygningen. Mangel på vitamin D kan øke risikoen for skjelettsykdommer. Litt sol er derfor viktig og bra, og det bare kort tid i sommersol som skal til for å få nok.</string>
+    <string name="solkremVinter">..du må huske solkrem også om vinteren? Selv om temperaturene er lave og UV-strålingen generelt sett er lavere på vinteren, er solen fremdeles til stede også denne årstiden. Snø kan i tillegg reflektere solens stråler og dermed øke strålingen, spesielt på fjellet.</string>
+    <string name="solbeskyttelse">..du alltid må bruke klær, solhatt og solbriller i tillegg til solkrem? Solkrem skal helst ikke brukes for å forlenge oppholdet i solen, men skal være et supplement til klær, solhatt, solbriller og skygge for å redusere mulige helserisikoer ved soleksponering.</string>
+    <string name="solkremVoksen">..En voksen person bør bruke en håndfull solkrem til ansikt og kropp? De aller fleste smører seg inn med for lite solkrem. Til èn smøring av hele kroppen anbefales det én håndfull, det vil si ca. 30 – 40 ml.</string>
+
 </resources>
