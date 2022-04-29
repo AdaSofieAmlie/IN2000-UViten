@@ -115,6 +115,7 @@
 
         <ImageView
             android:id="@+id/glassesImg"
+            android:background="@drawable/round_iconview"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
