@@ -26,14 +26,17 @@ class Notification {
         private const val channelNameTimer = "TimerAppTimer"
         private const val timerId = 0
 
-        private val date = Date()
-
-        fun showTimerExpired( context: Context){
+        fun showTimerExpired(context: Context){
             val startIntent = Intent(context, TimeNotificationReciver::class.java)
             startIntent.action = "start"
             val startPendingIntent = PendingIntent.getBroadcast(context, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            val timerExpiredAt: String = date.hours.toString() + ":" + date.minutes.toString()
+            val date = Date()
+            var timerExpiredAt: String = date.hours.toString() + ":"
+            if (date.minutes.toString().length == 1 ) {
+                timerExpiredAt += "0"
+            }
+            timerExpiredAt += date.minutes.toString()
 
             val notificationBuilder = getBasicNotification(context, channelIdTimer, true)
             val pendingIntent = PendingIntent.getActivity(context, 0, startIntent, PendingIntent.FLAG_UPDATE_CURRENT)
