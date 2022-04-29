@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModelMet: ViewModelMet by viewModels()
 
-    private val loc = Location(this)
+    public val loc = Location(this)
     lateinit var tv: TextView
 
 
