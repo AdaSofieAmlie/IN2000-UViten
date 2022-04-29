@@ -23,7 +23,7 @@ class Location(act: MainActivity){
     private var hasNetwork = false
     private var locationGps: Location? = null
     private var locationNetwork: Location? = null
-    var position: Pos = Pos(0,0.0F,0.0F)
+    var position: Pos = Pos(0,59.911491F,10.757933F)
 
 
     fun enableView() {
