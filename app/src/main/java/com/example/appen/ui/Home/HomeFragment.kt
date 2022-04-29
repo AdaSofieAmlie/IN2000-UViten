@@ -11,6 +11,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getDrawable
@@ -39,8 +41,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.URL
+import com.mapbox.maps.extension.style.expressions.dsl.generated.array
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 
@@ -526,7 +530,7 @@ class AdvancedDisplayFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        
+
     }
 
     override fun onResume() {
@@ -541,6 +545,10 @@ class AdvancedDisplayFragment : Fragment() {
 class InfoDisplayFragment : Fragment() {
 
     lateinit var info: View
+    lateinit var knappTilbake : ImageButton
+    lateinit var knappFremover : ImageButton
+    lateinit var vissteduTV : TextView
+    var plass : Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -548,10 +556,49 @@ class InfoDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         info = inflater.inflate(R.layout.fragment_info_display, container, false)
-
-
         return info
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        knappFremover = info.findViewById(R.id.knappFremover)
+        knappTilbake = info.findViewById(R.id.knappTilbake)
+        vissteduTV = info.findViewById(R.id.infoSvar)
+
+        vissteduTV.text = resources.getString(R.string.solbrentParasoll)
+
+        knappTilbake.setOnClickListener{
+           frem_bak(false)
+        }
+        knappFremover.setOnClickListener {
+            frem_bak(true)
+        }
+    }
+    fun frem_bak(flag: Boolean){
+        if (flag) {
+            plass += 1
+        }
+        else{
+            plass -= 1
+        }
+        when(plass){
+            0 -> {vissteduTV.text=resources.getString(R.string.solbrentParasoll)}
+            1 -> {vissteduTV.text=resources.getString(R.string.solVindu)}
+            2 -> {vissteduTV.text=resources.getString(R.string.hudFaktor)}
+            3 -> {vissteduTV.text=resources.getString(R.string.solskade)}
+            4 -> {vissteduTV.text=resources.getString(R.string.hudkreft)}
+            5 -> {vissteduTV.text=resources.getString(R.string.hudkreftNorge)}
+            6 -> {vissteduTV.text=resources.getString(R.string.dVitamin)}
+            7 -> {vissteduTV.text=resources.getString(R.string.solkremVinter)}
+            8 -> {vissteduTV.text=resources.getString(R.string.solbeskyttelse)}
+            9 -> {vissteduTV.text=resources.getString(R.string.solkremVoksen)}
+            -1 -> {plass = 9}
+            10 -> {plass = 0}
+        }
+    }
+
+
 
     override fun onPause() {
         super.onPause()
