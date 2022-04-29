@@ -1,5 +1,6 @@
 package com.example.appen.ui.Home
 
+import Pos
 import Uv
 import android.app.Activity
 import android.content.Context
@@ -10,13 +11,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import codebeautify.Geocoding
 import com.example.appen.MainActivity
 import com.example.appen.R
 import com.github.mikephil.charting.charts.ScatterChart
@@ -28,14 +32,27 @@ import com.github.mikephil.charting.data.ScatterDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import io.ktor.client.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.URL
+import com.mapbox.maps.extension.style.expressions.dsl.generated.array
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
+
 class HomeFragment : Fragment() {
     // When requested, this adapter returns a DemoObjectFragment,
     // representing an object in the collection.
+
+    lateinit var main: MainActivity
     var uvObjekt: Uv? = null
     private lateinit var demoCollectionAdapter: HomeCollectionAdapter
     lateinit var viewPager: ViewPager2
@@ -56,8 +73,22 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        val tabLayout = view?.findViewById<TabLayout>(R.id.tab_layout)
+        var tab = tabLayout?.getTabAt(0)
+        if (tab != null) {
+            tab.select()
+        }
+        tab = tabLayout?.getTabAt(1)
+        if (tab != null) {
+            tab.select()
+        }
+        Log.d("resume", "OnResume!!!!!")
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        var main = activity as MainActivity?
+        main = activity as MainActivity
         demoCollectionAdapter = HomeCollectionAdapter(this)
         viewPager = view.findViewById(R.id.pager)
         viewPager.adapter = demoCollectionAdapter
@@ -68,12 +99,22 @@ class HomeFragment : Fragment() {
             tab.text = "Tab ${(position + 1)}"
         }.attach()
 
+        tabLayout.getTabAt(0)?.setIcon(R.drawable.ic_baseline_timer_24)
+        tabLayout.getTabAt(0)?.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_UNLABELED)
+        tabLayout.getTabAt(1)?.setIcon(R.drawable.ic_round_wb_sun_24)
+        tabLayout.getTabAt(1)?.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_UNLABELED)
+        tabLayout.getTabAt(2)?.setIcon(R.drawable.ic_baseline_info_24)
+        tabLayout.getTabAt(2)?.setTabLabelVisibility(TabLayout.TAB_LABEL_VISIBILITY_UNLABELED)
+
+
         val tab = tabLayout.getTabAt(1)
         if (tab != null) {
             tab.select()
         }
 
-        val tv = tvBinding.findViewById<TextView>(R.id.tvSimple)
+
+
+        val tv = tvBinding.findViewById<TextView>(R.id.uvTv)
         val activity: Activity? = activity
         if (activity is MainActivity) {
             main = activity
@@ -82,7 +123,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        main?.getMet()?.getUvPaaSted()?.observe(main){
+        main.getMet().getUvPaaSted().observe(main){
             uvObjekt = it
             demoCollectionAdapter.update(it, main)
         }
@@ -170,6 +211,9 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     lateinit var tv: TextView
+    lateinit var anbTv: TextView
+    lateinit var tempTv: TextView
+    lateinit var locTv: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -179,6 +223,40 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         simple = inflater.inflate(R.layout.fragment_simple_display, container, false)
         return simple
     }
+
+    suspend fun setLoc(pos: Pos) {
+
+        try {
+            val client = HttpClient() {
+                install(JsonFeature) {
+                    acceptContentTypes = acceptContentTypes + ContentType.Any
+                }
+                install(UserAgent) {
+                    agent = "uio.no snorre@wenaas.org"
+                }
+            }
+
+            val url: URL = URL("https://api.bigdatacloud.net/data/reverse-geocode?latitude="+ pos.lat+ "&longitude=" + pos.lon + "&localityLanguage=no&key=e7e4fdceb8514a458a8dc231f6222030")
+            val returnString: String = client.get(url)
+            Log.d("Returnerer: ", returnString)
+            val geocode = Geocoding.fromJson(returnString)
+            if (geocode != null) {
+                requireActivity().runOnUiThread {
+                    locTv.text = geocode.locality + ", " + geocode.city
+                }
+            }
+
+
+
+        }
+        catch (exception: Exception) {
+            println("A network request exception was thrown: ${exception.message}")
+            requireActivity().runOnUiThread {
+                locTv.text = "Fant ikke posisjon..."
+            }
+        }
+    }
+
 
     fun initializePlot (){
         sc = simple.findViewById(R.id.SCchart)
@@ -240,7 +318,18 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val hour = time[1].split(":")[0].toFloat()
             val uv = timeseries[i].data.instant.details.ultraviolet_index_clear_sky.toFloat()
             if (uv.roundToInt()>yAxisMaxVisible) yAxisMaxVisible = uv.roundToInt()
-            entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()))
+            // endre ikon her:
+            var icon = getDrawable(requireContext(), R.drawable.sunone)
+            if (2.5 <= uv && uv <= 5.4) {
+                icon = getDrawable(requireContext(), R.drawable.suntwo)
+            }else if (5.5 <= uv && uv <= 7.4){
+                icon = getDrawable(requireContext(), R.drawable.sunthree)
+            } else if (7.5 <= uv && uv <= 10.4){
+                icon = getDrawable(requireContext(), R.drawable.sunfour)
+            } else if ( 10.5 <= uv){
+                icon = getDrawable(requireContext(), R.drawable.sunfive)
+            }
+            entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()).also { it.icon = icon })
             next12Hours.add(hour.toInt())
             Log.d("Added to index: ", next12Hours[i].toString())
         }
@@ -257,7 +346,16 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         val simpleDateFormat = SimpleDateFormat("HH")
         val currentDateAndTime: String = simpleDateFormat.format(Date())
 
-        tv = simple.findViewById<TextView>(R.id.tvSimple)
+        tv = simple.findViewById<TextView>(R.id.uvTv)
+        anbTv = simple.findViewById<TextView>(R.id.anbefaling)
+        tempTv = simple.findViewById<TextView>(R.id.tempTv)
+        locTv = simple.findViewById<TextView>(R.id.posTv)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val main = activity as MainActivity
+
+            setLoc(main.loc.position)
+        }
 
         for (i in innUv.properties.timeseries){
             val time = i.time.split("T")
@@ -265,12 +363,14 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             val hour = clock[0]
             if (hour.toInt() == currentDateAndTime.toInt() ){
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
+                val tempTime = i.data.instant.details.air_temperature.toFloat()
                 Log.d("Uv for nå", uvTime.toString())
                 updateIcons(uvTime)
                 Log.d("HEI1", tv.text.toString())
                 Log.d("HEI2", uvTime.toString())
                 innUv.uvTime = uvTime
-                tv.text = uvTime.toString()
+                tv.text = "\nUV:\n" + uvTime.toString()
+                tempTv.text = "\nTemp:\n" + tempTime.toString() + "C"
                 break
             }
         }
@@ -348,7 +448,8 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     fun anbefalSpf(spf: Int){
-        tv.text = "Anbefaler Spf " + spf
+        //tv.text = "Anbefaler Spf " + spf
+        anbTv.text = spf.toString()
         //Test
     }
 
@@ -411,14 +512,14 @@ class AdvancedDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         advanced = inflater.inflate(R.layout.fragment_advanced_display, container, false)
-        timerObject = Timer(advanced).settUpTimer(6)       //6 sec
-
+        timerObject = Timer(advanced).settUpTimer(7)       //2 hours = 7200
+        Log.d("On", "onCreateView")
         return advanced
     }
 
     override fun onPause() {
         super.onPause()
-
+        Log.d("PAUSE", "pasue")
         if (sharedPreferences.getTimeState(advanced.context) == Timer.TimeState.running) {
             val wakeUpTime = timerObject.onPauseStartBackgroundTimer()
         }
@@ -427,9 +528,14 @@ class AdvancedDisplayFragment : Fragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+    }
+
     override fun onResume() {
         super.onResume()
-        timerObject.startButtons()
+        Log.d("onResume", timerObject.timeState.toString())
         timerObject.initTimer()
         Timer.removeAlarm(advanced.context)
     }
@@ -439,6 +545,11 @@ class AdvancedDisplayFragment : Fragment() {
 class InfoDisplayFragment : Fragment() {
 
     lateinit var info: View
+    lateinit var knappTilbake : ImageButton
+    lateinit var knappFremover : ImageButton
+    lateinit var vissteduTV : TextView
+    lateinit var vissteduTVUndertest : TextView
+    var plass : Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -446,10 +557,89 @@ class InfoDisplayFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         info = inflater.inflate(R.layout.fragment_info_display, container, false)
-
-
         return info
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        knappFremover = info.findViewById(R.id.knappFremover)
+        knappTilbake = info.findViewById(R.id.knappTilbake)
+        vissteduTV = info.findViewById(R.id.infoSvar)
+        vissteduTVUndertest = info.findViewById(R.id.infoSvarUndertekst)
+
+        vissteduTV.text = resources.getString(R.string.solbrentParasoll)
+        vissteduTVUndertest.text = resources.getString(R.string.solbrentParasollUndertekst)
+
+        knappTilbake.setOnClickListener{
+           frem_bak(false)
+        }
+        knappFremover.setOnClickListener {
+            frem_bak(true)
+        }
+    }
+    fun frem_bak(flag: Boolean){
+        if (flag) {
+            plass += 1
+        }
+        else{
+            plass -= 1
+        }
+        when(plass){
+            0 -> {
+                vissteduTV.text=resources.getString(R.string.solbrentParasoll)
+                vissteduTVUndertest.text = resources.getString(R.string.solbrentParasollUndertekst)
+            }
+
+            1 -> {
+                vissteduTV.text=resources.getString(R.string.solVindu)
+                vissteduTVUndertest.text = resources.getString(R.string.solVinduUndertekst)
+
+            }
+            2 -> {
+                vissteduTV.text=resources.getString(R.string.hudFaktor)
+                vissteduTVUndertest.text = resources.getString(R.string.hudFaktorUndertekst)
+            }
+
+            3 -> {
+                vissteduTV.text=resources.getString(R.string.solskade)
+                vissteduTVUndertest.text = resources.getString(R.string.solskadeUndertekst)
+            }
+
+            4 -> {
+                vissteduTV.text=resources.getString(R.string.hudkreft)
+                vissteduTVUndertest.text = resources.getString(R.string.hudkreftUndertekst)
+            }
+
+            5 -> {
+                vissteduTV.text=resources.getString(R.string.hudkreftNorge)
+                vissteduTVUndertest.text = resources.getString(R.string.hudkreftNorgeUndertekst)
+            }
+
+            6 -> {
+                vissteduTV.text=resources.getString(R.string.dVitamin)
+                vissteduTVUndertest.text = resources.getString(R.string.dVitaminUndertekst)
+            }
+
+            7 -> {
+                vissteduTV.text=resources.getString(R.string.solkremVinter)
+                vissteduTVUndertest.text = resources.getString(R.string.solkremVinterUndertekst)
+            }
+            8 -> {
+                vissteduTV.text=resources.getString(R.string.solbeskyttelse)
+                vissteduTVUndertest.text = resources.getString(R.string.solbeskyttelseUndertekst)
+            }
+            9 -> {
+                vissteduTV.text=resources.getString(R.string.solkremVoksen)
+                vissteduTVUndertest.text = resources.getString(R.string.solkremVoksenUndertekst)
+            }
+
+            -1 -> {plass = 9}
+            10 -> {plass = 0}
+        }
+    }
+
+
 
     override fun onPause() {
         super.onPause()

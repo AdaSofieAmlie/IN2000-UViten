@@ -120,7 +120,7 @@ data class Data(
 )
 
 data class Pos(
-    val alt: Int = 0,
-    val lat: Float = 0.0F,
-    val lon: Float = 0.0F,
+    val alt: Int,
+    val lat: Float = 59.9F,
+    val lon: Float = 10.7F,
 )

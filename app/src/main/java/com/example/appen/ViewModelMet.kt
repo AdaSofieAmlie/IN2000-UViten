@@ -21,7 +21,7 @@ class ViewModelMet: ViewModel() {
     private val baseUrl: String = "https://api.met.no/weatherapi/locationforecast/2.0/complete.json?"
     var fullUrl: String = ""
     lateinit var location: Location
-    var pos: Pos = Pos(0,0.0F,0.0F)
+    var pos: Pos = Pos(0,59.9F,10.7F)
 
     private val uvPaaSted: MutableLiveData<Uv> by lazy {
         MutableLiveData<Uv>().also {
