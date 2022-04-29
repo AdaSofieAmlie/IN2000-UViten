@@ -6,9 +6,14 @@
     <string name="mapbox_access_token">pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q</string>
 
 
+    //Timer buttons
     <string name="startButton">Start</string>
     <string name="pauseButton">Pause</string>
     <string name="stopButton">Stop</string>
+    //Timer description
+    <string name="description">Start this timer after you have applied sunscreen, to keep track of when you need to reapply your sunscreen. </string>
+
+
 
     //icons
     <string name="glasses">Beskytt øynene dine</string>
@@ -49,5 +54,6 @@
     <string name="solkremVinter">..du må huske solkrem også om vinteren? Selv om temperaturene er lave og UV-strålingen generelt sett er lavere på vinteren, er solen fremdeles til stede også denne årstiden. Snø kan i tillegg reflektere solens stråler og dermed øke strålingen, spesielt på fjellet.</string>
     <string name="solbeskyttelse">..du alltid må bruke klær, solhatt og solbriller i tillegg til solkrem? Solkrem skal helst ikke brukes for å forlenge oppholdet i solen, men skal være et supplement til klær, solhatt, solbriller og skygge for å redusere mulige helserisikoer ved soleksponering.</string>
     <string name="solkremVoksen">..En voksen person bør bruke en håndfull solkrem til ansikt og kropp? De aller fleste smører seg inn med for lite solkrem. Til èn smøring av hele kroppen anbefales det én håndfull, det vil si ca. 30 – 40 ml.</string>
+
 
 </resources>

@@ -4,7 +4,6 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
-import android.os.Handler
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
@@ -12,6 +11,8 @@ import android.widget.Button
 import android.widget.TextView
 import com.example.appen.R
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -22,11 +23,13 @@ class Timer (advancedIn : View) {
     val  buttonStart : Button = advancedIn.findViewById(R.id.buttonStart)
     val buttonPause : Button = advancedIn.findViewById(R.id.buttonPause)
     val buttonStop : Button = advancedIn.findViewById(R.id.buttonStop)
+    val tvTimerExpired : TextView = advancedIn.findViewById(R.id.tvTimerExpired)
 
     lateinit var timer : CountDownTimer
     private var timerLengthInSeconds = 0L
     var timeState : TimeState = TimeState.stopped
     private var secondsRemaining = 0L
+    private var wakeUpTime : Long = 0L
 
     val advanced = advancedIn
 
@@ -99,12 +102,14 @@ class Timer (advancedIn : View) {
             timeState = TimeState.running
             sharedPreferences.setTimeState(timeState, advanced.context)
             updateButtons()
+            tvTimerExpired.text = ""
         }
 
         buttonPause.setOnClickListener{
             pauseTimer()
             timeState = TimeState.paused
             updateButtons()
+            tvTimerExpired.text = ""
         }
 
         buttonStop.setOnClickListener{
@@ -112,6 +117,7 @@ class Timer (advancedIn : View) {
             timeState = TimeState.stopped
             updateButtons()
             updateTimerUI()
+            tvTimerExpired.text = ""
         }
 
         updateTimerUI()
@@ -140,6 +146,12 @@ class Timer (advancedIn : View) {
         if (alarmSetTime > 0){
             val minus = (nowSeconds - alarmSetTime ) / 1000
             secondsRemaining -= minus
+        } else {
+            if (wakeUpTime != 0L && timeState == TimeState.stopped){
+                convertToTime(wakeUpTime)
+            }
+
+
         }
         Log.d("Tid", secondsRemaining.toString())
 
@@ -151,6 +163,18 @@ class Timer (advancedIn : View) {
         updateButtons()
         updateTimerUI()
         sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+    }
+
+    fun convertToTime(time : Long){
+        val dateFormat: DateFormat = SimpleDateFormat("HH:mm")
+        val dateWhenTheTimerExpired = Date(time)
+        Log.d("DATE", dateWhenTheTimerExpired.toString())
+        var stringTimerExpired = "Timer expired at: "
+        stringTimerExpired += dateFormat.format(dateWhenTheTimerExpired)
+        stringTimerExpired += ". Remember to reapply your sunnscreen!"
+
+        tvTimerExpired.text = stringTimerExpired
+
     }
 
     fun setNewTimerLength(){
@@ -165,6 +189,7 @@ class Timer (advancedIn : View) {
     }
 
     fun startTimer(){
+        val date = Date()
         Notification.hideTimerNotification(advanced.context)
         Log.d("Sec", secondsRemaining.toString())
         progress.max = sharedPreferences.getTimerLengthSeconds(advanced.context).toInt()
@@ -190,6 +215,7 @@ class Timer (advancedIn : View) {
                 stopTimer()
                 buttonStop.text = "Restart"
                 buttonPause.isEnabled = false
+                tvTimerExpired.text = "Timer expired at: "  + date.hours.toString() + ":" + date.minutes.toString() + ". Remember to reapply your sunnscreen!"
                 Notification.showTimerExpired(advanced.context)
             }
         }.start()
@@ -286,7 +312,8 @@ class Timer (advancedIn : View) {
     }
 
     fun onPauseStartBackgroundTimer() : Long {
-        val wakeUpTime : Long = setAlarm(advanced.context, nowSeconds, secondsRemaining)
+        wakeUpTime = setAlarm(advanced.context, nowSeconds, secondsRemaining)
+        Log.d("wkae up time", wakeUpTime.toString())
         return wakeUpTime
     }
 }

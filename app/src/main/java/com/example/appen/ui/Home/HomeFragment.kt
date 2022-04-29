@@ -225,6 +225,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     suspend fun setLoc(pos: Pos) {
+
         try {
             val client = HttpClient() {
                 install(JsonFeature) {

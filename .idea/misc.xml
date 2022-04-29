@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/legom/AndroidStudioProjects/App/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/legom/AndroidStudioProjects/App/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_info_24.xml" value="0.15" />
+        <entry key="app/src/main/res/drawable/ic_baseline_my_location_24.xml" value="0.124" />
         <entry key="app/src/main/res/drawable/ic_baseline_notification_important_24.xml" value="0.1515" />
         <entry key="app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.1015" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1015" />
@@ -10,7 +14,12 @@
         <entry key="..\:/Users/legom/AndroidStudioProjects/App/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.107" />
         <entry key="app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.107" />
+        <entry key="app/src/main/res/drawable/ic_round_profile_circle_24.xml" value="0.15" />
+        <entry key="app/src/main/res/drawable/rectangleview.xml" value="0.124" />
+        <entry key="app/src/main/res/drawable/round_sideview.xml" value="0.1335" />
+        <entry key="app/src/main/res/drawable/round_view.xml" value="0.1335" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2489451476793249" />
+        <entry key="app/src/main/res/layout/fragment_advanced_display.xml" value="0.3154815673828125" />
         <entry key="app/src/main/res/layout/fragment_advanced_display.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.2151268115942029" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.15020263424518743" />
@@ -22,6 +31,8 @@
         <entry key="app/src/main/res/layout/fragment_info_display.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_map.xml" value="0.20057373046875" />
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.23817138671875002" />
+        <entry key="app/src/main/res/layout/fragment_simple_display.xml" value="0.397021484375" />
+        <entry key="app/src/main/res/layout/fragment_simple_display.xml" value="0.33362579345703125" />
         <entry key="app/src/main/res/layout/search_viewstub.xml" value="0.1" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.1609375" />
       </map>
