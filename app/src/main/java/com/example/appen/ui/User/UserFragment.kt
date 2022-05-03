@@ -72,15 +72,13 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     override fun onResume() {
         super.onResume()
         seekBar1Value = binding.profilSeekBar
-        val fjell: ToggleButton = binding.fjell
-        val snoo: ToggleButton = binding.snoo
-        val sand: ToggleButton = binding.sand
-        val vann: ToggleButton = binding.vann
+        val hoydemeter: CheckBox = binding.hoydemeter
+        val snoo: CheckBox = binding.snoo2
+
         seekBar1Value.progress = sharedPreferencesUser.getSliderValue(requireContext())
-        fjell.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
+        hoydemeter.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
         snoo.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 2)
-        sand.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 3)
-        vann.isChecked = sharedPreferencesUser.getTooglesValue(requireContext(), 4)
+
     }
 
     override fun onDestroyView() {
@@ -115,16 +113,14 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     fun save(){
         //Toogles
-        val fjell: ToggleButton = binding.fjell
-        val snoo: ToggleButton = binding.snoo
-        val sand: ToggleButton = binding.sand
-        val vann: ToggleButton = binding.vann
+        val hoydemeter: CheckBox = binding.hoydemeter
+        val snoo2: CheckBox = binding.snoo2
+
 
         Log.d("BeskyttelseScore", beskyttelseScore.toString())
         sharedPreferencesUser.setSliderValue(seekBar1Value.progress,requireContext())
-        sharedPreferencesUser.setTooglesValue(fjell.isChecked, 1, requireContext())
-        sharedPreferencesUser.setTooglesValue(snoo.isChecked, 2, requireContext())
-        sharedPreferencesUser.setTooglesValue(sand.isChecked, 3, requireContext())
-        sharedPreferencesUser.setTooglesValue(vann.isChecked, 4, requireContext())
+        sharedPreferencesUser.setTooglesValue(hoydemeter.isChecked, 1, requireContext())
+        sharedPreferencesUser.setTooglesValue(snoo2.isChecked, 2, requireContext())
+
     }
 }

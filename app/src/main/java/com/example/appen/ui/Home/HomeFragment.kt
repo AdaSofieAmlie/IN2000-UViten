@@ -57,6 +57,7 @@ class HomeFragment : Fragment() {
     private lateinit var demoCollectionAdapter: HomeCollectionAdapter
     lateinit var viewPager: ViewPager2
     var uvTime: Float = 0.0F
+
     lateinit var tvBinding: View
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -187,6 +188,7 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     lateinit var simple : View
     var uvTime: Float = 0.0F
+    var uvTime2 = uvTime
 
     private var uvObjekt = uvobjekt
     lateinit var sc: ScatterChart
@@ -384,64 +386,62 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
         var beskyttelseScore = seekBar1ValueRegningDouble.toInt()
 
-        val fjell = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
-        val snoo = sharedPreferencesUser.getTooglesValue(requireContext(), 2)
-        val sand = sharedPreferencesUser.getTooglesValue(requireContext(), 3)
-        val vann = sharedPreferencesUser.getTooglesValue(requireContext(), 4)
+        val hoydemeter = sharedPreferencesUser.getTooglesValue(requireContext(), 1)
+        val snoo2 = sharedPreferencesUser.getTooglesValue(requireContext(), 2)
 
-        if(fjell) {
-            beskyttelseScore -= 10
+
+        if(hoydemeter) {
+            uvTime2 += uvTime * 0.5F
         }
-        if(snoo) {
-            beskyttelseScore -= 10
-        }
-        if(sand) {
-            beskyttelseScore -= 10
-        }
-        if(vann) {
-            beskyttelseScore -= 10
+        if(snoo2) {
+            uvTime2 += uvTime * 0.5F
         }
         Log.d("noe besky", beskyttelseScore.toString())
-        anbefaling(beskyttelseScore)
+
+        anbefaling(seekBar1ValueRegning)
     }
 
     fun anbefaling(beskyttelse: Int) {
-        when(uvTime){
-            in 0.0F..2.0F     -> anbefalSpf(6)
+        when(uvTime2){
+            in 0.0F..0.3F     -> anbefalSpf(0)
 
-
-            in 2.0F..4.0F     -> {
+            in 0.3F..3.0F     -> {
                 when(beskyttelse){
-                    in 0..20 -> anbefalSpf(20)
-                    in 20..50 -> anbefalSpf(15)
-                    in 50..70 -> anbefalSpf(10)
-                    in 70..100 -> anbefalSpf(6)
-
+                    in(1..2) -> anbefalSpf(30)
+                    in(3..6) -> anbefalSpf(0)
                 }
             }
-            in 4.0F..6.0F     -> {
+            in 3.0F..4.0F     -> {
                 when(beskyttelse){
-                    in 0..20 -> anbefalSpf(30)
-                    in 20..50 -> anbefalSpf(20)
-                    in 50..70 -> anbefalSpf(15)
-                    in 70..100 -> anbefalSpf(10)
-
+                    in(1..3) -> anbefalSpf(30)
+                    in(4..6) -> anbefalSpf(0)
                 }
             }
-            in 6.0F..8.0F    -> {
+            in 4.0F..6.0F    -> {
                 when(beskyttelse){
-                    in 0..20 -> anbefalSpf(40)
-                    in 20..50 -> anbefalSpf(30)
-                    in 50..70 -> anbefalSpf(20)
-                    in 70..100 -> anbefalSpf(15)
-
+                    1 -> anbefalSpf(50)
+                    in(2..4) -> anbefalSpf(30)
+                    in(5..6) -> anbefalSpf(0)
                 }
             }
-            in 8.0F..11.0F   -> {
+            in 6.0F..7.0F   -> {
                 when(beskyttelse){
-                    in 0..20 -> anbefalSpf(50)
-                    in 20..50 -> anbefalSpf(40)
-                    in 50..100 -> anbefalSpf(30)
+                    in(1..3) -> anbefalSpf(50)
+                    4 -> anbefalSpf(30)
+                    in(5..6) -> anbefalSpf(0)
+                }
+            }
+            in 7.0F..9.0F   -> {
+                when(beskyttelse){
+                    in(1..4) -> anbefalSpf(50)
+                    5 -> anbefalSpf(30)
+                    6 -> anbefalSpf(0)
+                }
+            }
+            in 9.0F..11.0F   -> {
+                when(beskyttelse){
+                    in(1..5) -> anbefalSpf(50)
+                    6 -> anbefalSpf(30)
                 }
             }
         }

@@ -76,48 +76,60 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Hvordan er miljøet rundt deg?"
-            android:textSize="20sp"/>
+            android:layout_marginTop="30dp"
+            android:text="Jeg befinner meg i omgivelser preget av: "
+            android:textSize="20sp" />
+
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="45dp"
             android:layout_marginTop="0dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
 
-            <ToggleButton
-                android:id="@+id/snoo"
-                android:layout_width="80dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="Vann, Snø, eller Sand"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/snoo2"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:textOff="Snø"
+                android:textOff="Snø, Sand eller Vann"
                 android:textOn="Snø" />
 
-            <ToggleButton
-                android:id="@+id/fjell"
-                android:layout_width="80dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:textOff="Fjell"
-                android:textOn="Fjell"/>
 
-            <ToggleButton
-                android:id="@+id/sand"
-                android:layout_width="80dp"
-                android:layout_height="50dp"
-                android:layout_margin="5dp"
-                android:textOff="Sand"
-                android:textOn="Sand"/>
+        </LinearLayout>
 
-            <ToggleButton
-                android:id="@+id/vann"
-                android:layout_width="80dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="Mange høydemeter"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/hoydemeter"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:textOff="Vann"
-                android:textOn="Vann"/>
+                android:textOff="Snø, Sand eller Vann"
+                android:textOn="Snø" />
+
         </LinearLayout>
 
         <TextView
