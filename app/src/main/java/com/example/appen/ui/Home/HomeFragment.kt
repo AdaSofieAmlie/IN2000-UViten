@@ -4,7 +4,9 @@ import Pos
 import Uv
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -188,7 +190,7 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
 class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     lateinit var simple : View
     var uvTime: Float = 0.0F
-    var uvTime2 = uvTime
+
 
     private var uvObjekt = uvobjekt
     lateinit var sc: ScatterChart
@@ -380,6 +382,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
     }
 
     fun kalkuler() {
+        var uvTime2 = uvTime
         var seekBar1ValueRegning = sharedPreferencesUser.getSliderValue(requireContext())
         seekBar1ValueRegning = seekBar1ValueRegning+1
         val seekBar1ValueRegningDouble : Double = seekBar1ValueRegning * 16.67
@@ -396,12 +399,13 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         if(snoo2) {
             uvTime2 += uvTime * 0.5F
         }
-        Log.d("noe besky", beskyttelseScore.toString())
+        Log.d("uvTime", uvTime.toString())
+        Log.d("uvTime2", uvTime2.toString())
 
-        anbefaling(seekBar1ValueRegning)
+        anbefaling(seekBar1ValueRegning, uvTime2)
     }
 
-    fun anbefaling(beskyttelse: Int) {
+    fun anbefaling(beskyttelse: Int, uvTime2: Float) {
         when(uvTime2){
             in 0.0F..0.3F     -> anbefalSpf(0)
 
@@ -549,6 +553,9 @@ class InfoDisplayFragment : Fragment() {
     lateinit var knappFremover : ImageButton
     lateinit var vissteduTV : TextView
     lateinit var vissteduTVUndertest : TextView
+    lateinit var uvKnapp: Button
+    lateinit var hudKnapp: Button
+    lateinit var solkremKnapp: Button
     var plass : Int = 0
 
     override fun onCreateView(
@@ -567,6 +574,10 @@ class InfoDisplayFragment : Fragment() {
         knappTilbake = info.findViewById(R.id.knappTilbake)
         vissteduTV = info.findViewById(R.id.infoSvar)
         vissteduTVUndertest = info.findViewById(R.id.infoSvarUndertekst)
+        uvKnapp = info.findViewById(R.id.uvKnapp)
+        hudKnapp = info.findViewById(R.id.hudKnapp)
+        solkremKnapp = info.findViewById(R.id.solKnapp)
+
 
         vissteduTV.text = resources.getString(R.string.solbrentParasoll)
         vissteduTVUndertest.text = resources.getString(R.string.solbrentParasollUndertekst)
@@ -576,6 +587,19 @@ class InfoDisplayFragment : Fragment() {
         }
         knappFremover.setOnClickListener {
             frem_bak(true)
+        }
+
+        uvKnapp.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fhi.no/ml/miljo/straling/ultrafiolett-uv-straling/"))
+            startActivity(i)
+        }
+        hudKnapp.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://kreftforeningen.no/forebygging/sol-solarium-og-hudkreft/"))
+            startActivity(i)
+        }
+        solkremKnapp.setOnClickListener {
+            val i = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.fhi.no/ml/miljo/straling/ti-ting-du-ma-vite-om-soling-i-sommer/"))
+            startActivity(i)
         }
     }
     fun frem_bak(flag: Boolean){

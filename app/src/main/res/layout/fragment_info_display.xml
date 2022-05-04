@@ -21,8 +21,8 @@
 
     <ImageButton
         android:id="@+id/knappFremover"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44dp"
+        android:layout_height="35dp"
         android:backgroundTint="@color/orange"
         android:scaleX="2"
         android:scaleY="2"
@@ -36,8 +36,8 @@
 
     <ImageButton
         android:id="@+id/knappTilbake"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="44dp"
+        android:layout_height="35dp"
         android:backgroundTint="@color/orange"
         android:scaleType="center"
         android:scaleX="2"
@@ -82,6 +82,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/infoSvar"
         app:layout_constraintVertical_bias="0.044" />
+
+    <Button
+        android:id="@+id/uvKnapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UV"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/solKnapp"
+        app:layout_constraintHorizontal_bias="0.142"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.705" />
+
+    <Button
+        android:id="@+id/hudKnapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hudkreft"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/solKnapp"
+        app:layout_constraintHorizontal_bias="0.569"
+        app:layout_constraintStart_toEndOf="@+id/uvKnapp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.705" />
+
+    <Button
+        android:id="@+id/solKnapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10 Tips"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.705" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
