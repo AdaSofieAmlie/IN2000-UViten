@@ -46,8 +46,8 @@ class Notification {
                 R.drawable.ic_round_wb_sun_24
             )
 
-            notificationBuilder.setContentTitle("Remeber to reapply your sunscreen!")
-                .setContentText("Timer expired at: $timerExpiredAt")
+            notificationBuilder.setContentTitle("På tide å smøre seg på nytt!")
+                .setContentText("Nedtellingen var ferdig $timerExpiredAt")
                 .setContentIntent(pendingIntent)
                 .setLargeIcon(icon)
                 .setSmallIcon(R.drawable.ic_round_wb_sun_24)

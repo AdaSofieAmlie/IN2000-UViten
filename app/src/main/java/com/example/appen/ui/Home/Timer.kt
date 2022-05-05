@@ -215,7 +215,11 @@ class Timer (advancedIn : View) {
                 stopTimer()
                 buttonStop.text = "Restart"
                 buttonPause.isEnabled = false
-                tvTimerExpired.text = "Timer expired at: "  + date.hours.toString() + ":" + date.minutes.toString() + ". Remember to reapply your sunnscreen!"
+                var minutt = date.minutes.toString()
+                if(minutt.length == 1) {
+                    minutt = "0" + date.minutes.toString()
+                }
+                tvTimerExpired.text = "Nedtellingen var ferdig "  + date.hours.toString() + ":" + minutt + ". Husk å smøre deg på nytt!"
                 Notification.showTimerExpired(advanced.context)
             }
         }.start()
