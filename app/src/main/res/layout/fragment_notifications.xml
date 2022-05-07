@@ -30,7 +30,7 @@
             android:layout_marginBottom="20dp"
             android:text="TextView"
             android:textAlignment="center"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,14 +44,14 @@
                 android:layout_marginEnd="140dp"
                 android:textStyle="bold"
                 android:text="UV sensitiv"
-                android:textSize="20sp"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="UV resistent"
-                android:textSize="20sp"/>
+                android:textSize="14sp"/>
 
         </LinearLayout>
         <SeekBar
@@ -77,8 +77,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:fontFamily="@font/poppins_regular"
             android:text="Jeg befinner meg i omgivelser preget av: "
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
 
         <LinearLayout
@@ -94,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
                 android:text="Vann, Snø, eller Sand"
-                android:textSize="20sp" />
+                android:textSize="16sp" />
 
             <CheckBox
                 android:id="@+id/snoo2"
@@ -120,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
                 android:text="Mange høydemeter"
-                android:textSize="20sp" />
+                android:textSize="16sp" />
 
             <CheckBox
                 android:id="@+id/hoydemeter"
@@ -140,7 +141,8 @@
             android:hint="Psst! Husk å lagre!"
             android:textAlignment="center"
             android:textSize="15sp"
-            android:textStyle="italic"/>
+            android:textStyle="italic" />
+
         <Button
             android:id="@+id/profilLagre"
             android:layout_width="170dp"

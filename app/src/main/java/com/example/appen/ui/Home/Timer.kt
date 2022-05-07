@@ -169,9 +169,9 @@ class Timer (advancedIn : View) {
         val dateFormat: DateFormat = SimpleDateFormat("HH:mm")
         val dateWhenTheTimerExpired = Date(time)
         Log.d("DATE", dateWhenTheTimerExpired.toString())
-        var stringTimerExpired = "Timer expired at: "
+        var stringTimerExpired = "Nedtellingen gikk ut kl: "
         stringTimerExpired += dateFormat.format(dateWhenTheTimerExpired)
-        stringTimerExpired += ". Remember to reapply your sunnscreen!"
+        stringTimerExpired += ". Husk å smøre deg på nytt! ;)"
 
         tvTimerExpired.text = stringTimerExpired
 
