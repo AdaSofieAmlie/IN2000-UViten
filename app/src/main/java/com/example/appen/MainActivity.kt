@@ -55,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         locationMan = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_Appen)
         inst = this
 
 ////////////////////////////

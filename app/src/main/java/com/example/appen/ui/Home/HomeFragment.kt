@@ -13,10 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -466,10 +463,25 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         val imgShade: ImageView = simple.findViewById(R.id.shadeImg)
 
         imgGlasses.isVisible = true
+        imgGlasses.setOnClickListener { view ->
+            Toast.makeText(requireContext(), R.string.glasses, Toast.LENGTH_LONG).show()
+        }
         imgSunscreen.isVisible = true
+        imgSunscreen.setOnClickListener { view ->
+            Toast.makeText(requireContext(), R.string.sunscreen, Toast.LENGTH_LONG).show()
+        }
         imgCap.isVisible = true
+        imgCap.setOnClickListener { view ->
+            Toast.makeText(requireContext(), R.string.cap, Toast.LENGTH_LONG).show()
+        }
         imgClothes.isVisible = true
+        imgClothes.setOnClickListener { view ->
+            Toast.makeText(requireContext(), R.string.clothes, Toast.LENGTH_LONG).show()
+        }
         imgShade.isVisible = true
+        imgShade.setOnClickListener { view ->
+            Toast.makeText(requireContext(), R.string.shade, Toast.LENGTH_LONG).show()
+        }
 
         if (0 <= uvTime && uvTime <= 2.4){
             Log.d("show one icon", "Glasses")

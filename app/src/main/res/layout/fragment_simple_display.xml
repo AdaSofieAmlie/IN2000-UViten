@@ -43,7 +43,7 @@
         android:layout_height="21dp"
         android:text="Spf"
         android:textColor="@color/white"
-        android:textSize="15dp"
+        android:textSize="16dp"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@+id/anbefaling"
         app:layout_constraintEnd_toEndOf="@+id/anbefaling"
@@ -62,7 +62,7 @@
         android:textAlignment="center"
 
         android:textColor="@color/purple_500"
-        android:textSize="15dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/anbefaling"
         app:layout_constraintHorizontal_bias="0.776"
@@ -78,7 +78,7 @@
         android:text="Temp:"
         android:textAlignment="center"
         android:textColor="@color/purple_500"
-        android:textSize="15dp"
+        android:textSize="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.232"
@@ -122,6 +122,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:contentDescription="@string/glasses"
+            android:clickable="true"
             android:src="@drawable/glasses"
             app:layout_constraintTop_toBottomOf="@+id/tvSimple" />
 
@@ -134,6 +135,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:contentDescription="@string/sunscreen"
+            android:clickable="true"
             android:src="@drawable/sunscreen"
             app:layout_constraintStart_toEndOf="@id/glassesImg" />
 
@@ -146,6 +148,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:contentDescription="@string/cap"
+            android:clickable="true"
             android:src="@drawable/cap"
             app:layout_constraintStart_toEndOf="@id/sunscreenImg" />
 
@@ -157,6 +160,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/clothes"
+            android:clickable="true"
             android:src="@drawable/clothes"
             app:layout_constraintStart_toEndOf="@id/capImg" />
 
@@ -169,6 +173,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:contentDescription="@string/shade"
+            android:clickable="true"
             android:src="@drawable/shadeandsunbed"
             app:layout_constraintStart_toEndOf="@id/clothesImg" />
 

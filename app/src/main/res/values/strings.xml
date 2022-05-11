@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Appen</string>
+    <string name="app_name">UViten</string>
     <string name="title_home">Hjem</string>
     <string name="title_map">Kart</string>
     <string name="title_profile">Profil</string>
@@ -11,7 +11,7 @@
     <string name="pauseButton">Pause</string>
     <string name="stopButton">Stop</string>
     //Timer description
-    <string name="description">Start this timer after you have applied sunscreen, to keep track of when you need to reapply your sunscreen. </string>
+    <string name="description">Start nedtellingen etter du har smørt deg, slik at du vet når du må smøre deg neste gang! Husk at du må smøre deg tidligere dersom du feks. svetter eller bader. </string>
 
 
 

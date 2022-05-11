@@ -169,9 +169,9 @@ class Timer (advancedIn : View) {
         val dateFormat: DateFormat = SimpleDateFormat("HH:mm")
         val dateWhenTheTimerExpired = Date(time)
         Log.d("DATE", dateWhenTheTimerExpired.toString())
-        var stringTimerExpired = "Timer expired at: "
+        var stringTimerExpired = "Nedtellingen gikk ut kl: "
         stringTimerExpired += dateFormat.format(dateWhenTheTimerExpired)
-        stringTimerExpired += ". Remember to reapply your sunnscreen!"
+        stringTimerExpired += ". Husk å smøre deg på nytt! ;)"
 
         tvTimerExpired.text = stringTimerExpired
 
@@ -215,7 +215,11 @@ class Timer (advancedIn : View) {
                 stopTimer()
                 buttonStop.text = "Restart"
                 buttonPause.isEnabled = false
-                tvTimerExpired.text = "Timer expired at: "  + date.hours.toString() + ":" + date.minutes.toString() + ". Remember to reapply your sunnscreen!"
+                var minutt = date.minutes.toString()
+                if(minutt.length == 1) {
+                    minutt = "0" + date.minutes.toString()
+                }
+                tvTimerExpired.text = "Nedtellingen var ferdig "  + date.hours.toString() + ":" + minutt + ". Husk å smøre deg på nytt!"
                 Notification.showTimerExpired(advanced.context)
             }
         }.start()
