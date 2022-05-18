@@ -58,9 +58,8 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }
         lagre = binding.profilLagre
         lagre.setOnClickListener{
-
             save()
-
+            Toast.makeText(requireContext(), "Lagret", Toast.LENGTH_LONG).show()
         }
         return root
     }
