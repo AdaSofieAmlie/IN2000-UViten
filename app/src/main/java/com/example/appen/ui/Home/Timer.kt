@@ -17,9 +17,9 @@ import java.util.*
 
 
 class Timer (advancedIn : View) {
-
     lateinit var tvTimer : TextView
     lateinit var progress : MaterialProgressBar
+    //Material ProgressBar: https://github.com/zhanghai/MaterialProgressBar
     val  buttonStart : Button = advancedIn.findViewById(R.id.buttonStart)
     val buttonPause : Button = advancedIn.findViewById(R.id.buttonPause)
     val buttonStop : Button = advancedIn.findViewById(R.id.buttonStop)
@@ -70,8 +70,6 @@ class Timer (advancedIn : View) {
 
     }
 
-
-
     fun settUpTimer(tid : Long) : Timer{
         tvTimer = advanced.findViewById(R.id.tvDigitalTime)
         progress = advanced.findViewById(R.id.progress_circular)
@@ -94,7 +92,6 @@ class Timer (advancedIn : View) {
 
         sharedPreferences.setTimeState(timeState, advanced.context)
         progress.max = timerLengthInSeconds.toInt()
-
 
         buttonStart.setOnClickListener{
             buttonStop.text = "STOP"
@@ -150,7 +147,6 @@ class Timer (advancedIn : View) {
             if (wakeUpTime != 0L && timeState == TimeState.stopped){
                 convertToTime(wakeUpTime)
             }
-
 
         }
         Log.d("Tid", secondsRemaining.toString())
@@ -252,8 +248,6 @@ class Timer (advancedIn : View) {
         Log.d("timerlengthInSec", timerLengthInSeconds.toString())
 
         updateButtons()
-
-
     }
 
     fun updateTimerUI(){
