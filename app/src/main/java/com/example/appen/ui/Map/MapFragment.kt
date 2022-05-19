@@ -146,7 +146,6 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
             Log.i("SearchApiExample", "Reverse geocoding error", e)
         }
     }
-    //
 
     override fun onCreateView(
         inflater: LayoutInflater,

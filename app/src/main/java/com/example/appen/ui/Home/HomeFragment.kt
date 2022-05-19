@@ -354,7 +354,6 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val main = activity as MainActivity
-
             setLoc(main.loc.position)
         }
 

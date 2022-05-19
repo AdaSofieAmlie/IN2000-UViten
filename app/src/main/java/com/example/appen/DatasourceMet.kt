@@ -27,7 +27,7 @@ class DatasourceMet {
             return returnObjekt
         }
         catch (exception: Exception) {
-            println("A network request exception was thrown: ${exception.message}")
+            println({exception.message})
         }
         return null
     }

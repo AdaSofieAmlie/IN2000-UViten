@@ -30,12 +30,9 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    var location = activity as Location?
 
     //Score
     var beskyttelseScore = 0
-    //aktivitet
-    lateinit var spinner: Spinner
     //hudtype
     lateinit var seekBar1Value: SeekBar
     //lagreKnapp
@@ -92,23 +89,6 @@ class UserFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
         TODO("Not yet implemented")
-    }
-
-    fun onProgressChanged(seek: SeekBar,
-                                    progress: Int, fromUser: Boolean) {
-        // write custom code for progress is changed
-    }
-
-    fun onStartTrackingTouch(seek: SeekBar) {
-        // write custom code for progress is started
-    }
-
-    fun onStopTrackingTouch(seek: SeekBar) {
-        // write custom code for progress is stopped
-    }
-
-    fun fetchContext() : Context {
-        return requireContext()
     }
 
     fun save(){
