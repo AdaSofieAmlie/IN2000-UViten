@@ -56,7 +56,7 @@ class Notification {
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channelIdTimer, channelNameTimer, true)
             notificationManager.notify(timerId, notificationBuilder.build())
-            Log.d("Not1", "1")
+            Log.d("TEST: Not1", "1")
         }
 
         public fun hideTimerNotification(context: Context){

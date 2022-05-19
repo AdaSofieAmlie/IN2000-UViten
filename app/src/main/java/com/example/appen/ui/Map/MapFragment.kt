@@ -280,10 +280,10 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
                 .build()
         )
         mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
-            Log.d(null,"Før locationComp og GestureListener")
+            Log.d("TEST","Før locationComp og GestureListener")
             initLocationComponent()
             setupGesturesListener()
-            Log.d(null,"LocationCompListener og CameraGestureListener kjører")
+            Log.d("TEST","LocationCompListener og CameraGestureListener kjører")
         }
 
     }
@@ -396,7 +396,7 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
     private fun initLocationComponent() {
         mapView.location
         val locationComponentPlugin = mapView.location
-        Log.d(null,"Hentet location")
+        Log.d("TEST","TEST: Hentet location")
         locationComponentPlugin.updateSettings {
             this.enabled = true
             LocationPuck2D(
@@ -428,11 +428,11 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
                 }.toJson()
             )//.also { this.locationPuck = it }
         }
-        Log.d(null,"Location Component listeners")
+        Log.d("TEST","Location Component listeners")
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-        Log.d(null,"Location Component Ferdig")
-        Log.d(null,"...\nKart location ferdig \n...")
+        Log.d("TEST","Location Component Ferdig")
+        Log.d("TEST","...\nKart location ferdig \n...")
     }
 
     private fun onCameraTrackingDismissed() {
@@ -469,7 +469,7 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
     override fun onLowMemory() {
         super.onLowMemory()
         mapView?.onLowMemory()
-        Log.d(null,"Low memory")
+        Log.d("TEST: ","Low memory")
     }
 
     override fun onDestroyView() {
@@ -481,7 +481,7 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         mapView.location
             .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         mapView.gestures.removeOnMoveListener(onMoveListener)
-        Log.d(null,"... Destroy kart")
+        Log.d("TEST: ","... Destroy kart")
 
     }
 
@@ -561,7 +561,7 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
             val clock = time[1].split(":")
             val hour = clock[0]
             if (hour.toInt() == currentDateAndTime.toInt() ){
-                //Log.d("Uv for nå", i.toString())
+                Log.d("TEST: Uv for nå", i.toString())
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
                 tvText.text = uvTime.toString()
                 break

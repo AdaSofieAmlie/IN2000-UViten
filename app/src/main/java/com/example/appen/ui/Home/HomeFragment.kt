@@ -87,7 +87,7 @@ class HomeFragment : Fragment() {
         if (tab != null) {
             tab.select()
         }
-        Log.d("resume", "OnResume!!!!!")
+        Log.d("TEST: Resume", "TEST: OnResume!")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,7 +122,7 @@ class HomeFragment : Fragment() {
         if (activity is MainActivity) {
             main = activity
             if(tv == null) {
-                Log.d("HEIDU", "JA")
+                Log.d("TEST", "TEST: tvBinding is null")
             }
         }
 
@@ -130,6 +130,11 @@ class HomeFragment : Fragment() {
             uvObjekt = it
             demoCollectionAdapter.update(it, main)
         }
+    }
+
+    //Testmetode
+    fun setUvTimeTest(uv: Float) {
+        uvTime = uv
     }
 }
 
@@ -171,7 +176,7 @@ class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment)
                                 if (disp == simple){
                                     val simpleDisp = disp as SimpleDisplayFragment
                                     uvobjekt = innUv
-                                    Log.d("UpdateUI", uvobjekt!!.properties.timeseries.toString())
+                                    Log.d("TEST: UpdateUI", uvobjekt!!.properties.timeseries.toString())
                                     simpleDisp.updateUi(innUv)
                                     simpleDisp.updatePlot(innUv)
                                     simpleDisp.kalkuler()
@@ -242,7 +247,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
             val url: URL = URL("https://api.bigdatacloud.net/data/reverse-geocode?latitude="+ pos.lat+ "&longitude=" + pos.lon + "&localityLanguage=no&key=e7e4fdceb8514a458a8dc231f6222030")
             val returnString: String = client.get(url)
-            Log.d("Returnerer: ", returnString)
+            Log.d("TEST:Returnerer (setLoc): ", returnString)
             val geocode = Geocoding.fromJson(returnString)
             if (geocode != null) {
                 requireActivity().runOnUiThread {
@@ -314,7 +319,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
 
     fun addEntries(){
         // ANTAKELSE: den første timen i timeseries er den vi er på nå
-        Log.d("addEntries: ", "Legger til entries")
+        Log.d("TEST. addEntries: ", "TEST: Legger til entries")
         next12Hours.clear()
         val timeseries = uvObjekt!!.properties.timeseries
         for (i in 0..11){
@@ -335,7 +340,7 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             }
             entries.add(BarEntry(i.toFloat(), uv.roundToInt().toFloat()).also { it.icon = icon })
             next12Hours.add(hour.toInt())
-            Log.d("Added to index: ", next12Hours[i].toString())
+            Log.d("TEST: Legger til på indeks: ", next12Hours[i].toString())
         }
     }
 
@@ -368,10 +373,10 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
             if (hour.toInt() == currentDateAndTime.toInt() ){
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
                 val tempTime = i.data.instant.details.air_temperature.toFloat()
-                Log.d("Uv for nå", uvTime.toString())
+                Log.d("TEST: Uv for nå", uvTime.toString())
                 updateIcons(uvTime)
-                Log.d("HEI1", tv.text.toString())
-                Log.d("HEI2", uvTime.toString())
+                Log.d("TEST: tv.text", tv.text.toString())
+                Log.d("TEST: uvTime", uvTime.toString())
                 innUv.uvTime = uvTime
                 tv.text = "\nUV:\n" + uvTime.toString()
                 tempTv.text = "\nTemp:\n" + tempTime.toString() + "C"
@@ -399,62 +404,67 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         if(snoo2) {
             uvTime2 += uvTime * 0.5F
         }
-        Log.d("uvTime", uvTime.toString())
-        Log.d("uvTime2", uvTime2.toString())
+        Log.d("TEST: uvTime", uvTime.toString())
+        Log.d("TEST: uvTime2", uvTime2.toString())
 
-        anbefaling(seekBar1ValueRegning, uvTime2)
+        anbefaling(seekBar1ValueRegning, uvTime2, false)
     }
 
-    fun anbefaling(beskyttelse: Int, uvTime2: Float) {
+    fun anbefaling(beskyttelse: Int, uvTime2: Float, test: Boolean): Int{
         when(uvTime2){
-            in 0.0F..0.3F     -> anbefalSpf(0)
+            in 0.0F..0.3F     -> return anbefalSpf(0, test)
 
             in 0.3F..3.0F     -> {
                 when(beskyttelse){
-                    in(1..2) -> anbefalSpf(30)
-                    in(3..6) -> anbefalSpf(0)
+                    in(1..2) -> return anbefalSpf(30, test)
+                    in(3..6) -> return anbefalSpf(0, test)
                 }
             }
             in 3.0F..4.0F     -> {
                 when(beskyttelse){
-                    in(1..3) -> anbefalSpf(30)
-                    in(4..6) -> anbefalSpf(0)
+                    in(1..3) -> return anbefalSpf(30, test)
+                    in(4..6) -> return anbefalSpf(0, test)
                 }
             }
             in 4.0F..6.0F    -> {
                 when(beskyttelse){
-                    1 -> anbefalSpf(50)
-                    in(2..4) -> anbefalSpf(30)
-                    in(5..6) -> anbefalSpf(0)
+                    1 -> return anbefalSpf(50, test)
+                    in(2..4) -> return anbefalSpf(30, test)
+                    in(5..6) -> return anbefalSpf(0, test)
                 }
             }
             in 6.0F..7.0F   -> {
                 when(beskyttelse){
-                    in(1..3) -> anbefalSpf(50)
-                    4 -> anbefalSpf(30)
-                    in(5..6) -> anbefalSpf(0)
+                    in(1..3) -> return anbefalSpf(50, test)
+                    4 -> return anbefalSpf(30, test)
+                    in(5..6) -> return anbefalSpf(0, test)
                 }
             }
             in 7.0F..9.0F   -> {
                 when(beskyttelse){
-                    in(1..4) -> anbefalSpf(50)
-                    5 -> anbefalSpf(30)
-                    6 -> anbefalSpf(0)
+                    in(1..4) -> return anbefalSpf(50, test)
+                    5 -> return anbefalSpf(30, test)
+                    6 -> return anbefalSpf(0, test)
                 }
             }
             in 9.0F..11.0F   -> {
                 when(beskyttelse){
-                    in(1..5) -> anbefalSpf(50)
-                    6 -> anbefalSpf(30)
+                    in(1..5) -> return anbefalSpf(50, test)
+                    6 -> return anbefalSpf(30, test)
                 }
             }
         }
+        return 0
     }
 
-    fun anbefalSpf(spf: Int){
+    fun anbefalSpf(spf: Int, test: Boolean): Int{
         //tv.text = "Anbefaler Spf " + spf
-        anbTv.text = spf.toString()
+        if(!test) {
+            anbTv.text = spf.toString()
+            return 0
+        }
         //Test
+        return spf
     }
 
     fun updateIcons(uvTime : Float){
@@ -472,35 +482,35 @@ class SimpleDisplayFragment(uvobjekt: Uv?) : Fragment() {
         imgShade.isVisible = true
 
         if (0 <= uvTime && uvTime <= 2.4){
-            Log.d("show one icon", "Glasses")
+            Log.d("TEST: show one icon", "Glasses")
             imgGlasses.isVisible = true
             imgSunscreen.isVisible = false
             imgCap.isVisible = false
             imgClothes.isVisible = false
             imgShade.isVisible = false
         } else if (2.5 <= uvTime && uvTime <= 5.4){
-            Log.d("show two icons", "Glasses, Sunscreen")
+            Log.d("TEST: show two icons", "Glasses, Sunscreen")
             imgGlasses.isVisible = true
             imgSunscreen.isVisible = true
             imgCap.isVisible = false
             imgClothes.isVisible = false
             imgShade.isVisible = false
         } else if (5.5 <= uvTime && uvTime <= 7.4){
-            Log.d("show three icons", "Glasses, Sunscreen, Cap")
+            Log.d("TEST: show three icons", "Glasses, Sunscreen, Cap")
             imgGlasses.isVisible = true
             imgSunscreen.isVisible = true
             imgCap.isVisible = true
             imgClothes.isVisible = false
             imgShade.isVisible = false
         } else if (7.5 <= uvTime && uvTime <= 10.4){
-            Log.d("show four icons", "Glasses, Sunscreen, Cap, Clothes")
+            Log.d("TEST: show four icons", "Glasses, Sunscreen, Cap, Clothes")
             imgGlasses.isVisible = true
             imgSunscreen.isVisible = true
             imgCap.isVisible = true
             imgClothes.isVisible = true
             imgShade.isVisible = false
         } else {
-            Log.d("show five icons", "Glasses, Sunscreen, Cap, Clothes, Shade")
+            Log.d("TEST: show five icons", "Glasses, Sunscreen, Cap, Clothes, Shade")
         }
     }
 }
@@ -517,13 +527,13 @@ class AdvancedDisplayFragment : Fragment() {
     ): View {
         advanced = inflater.inflate(R.layout.fragment_advanced_display, container, false)
         timerObject = Timer(advanced).settUpTimer(7)       //2 hours = 7200
-        Log.d("On", "onCreateView")
+        Log.d("TEST: On", "onCreateView")
         return advanced
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("PAUSE", "pasue")
+        Log.d("TEST: PAUSE", "pasue")
         if (sharedPreferences.getTimeState(advanced.context) == Timer.TimeState.running) {
             val wakeUpTime = timerObject.onPauseStartBackgroundTimer()
         }
@@ -539,7 +549,7 @@ class AdvancedDisplayFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("onResume", timerObject.timeState.toString())
+        Log.d("TEST: onResume", timerObject.timeState.toString())
         timerObject.initTimer()
         Timer.removeAlarm(advanced.context)
     }
@@ -700,8 +710,8 @@ class sharedPreferencesUser() {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
             toogleId += id.toString()
             val returnValue: Boolean = pref.getBoolean(toogleId, false)
-            Log.d("toogle", toogleId)
-            Log.d("verdi", returnValue.toString())
+            Log.d("TEST: toogle id", toogleId)
+            Log.d("TEST: returnert verdi", returnValue.toString())
             toogleId = toogleId.substring(0, toogleId.length - 1)
             return returnValue
         }
