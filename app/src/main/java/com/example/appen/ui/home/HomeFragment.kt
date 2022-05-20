@@ -56,7 +56,7 @@ class HomeFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
     //com.example.appen.base.Uv objektet (data) og uvTime(UV akkurat nå)
     private var uvObjekt: Uv? = null
-    private var uvTime: Float = 0.0F
+    var uvTime: Float = 0.0F
 
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -407,7 +407,7 @@ class SolvarselFragment(uvobjekt: Uv?) : Fragment() {
     enkle whens med "in range
     */
 
-    private fun anbefaling(beskyttelse: Int, uvTime2: Float, test: Boolean): Int{
+    fun anbefaling(beskyttelse: Int, uvTime2: Float, test: Boolean): Int{
         when(uvTime2){
             in 0.0F..0.3F     -> return anbefalSpf(0, test)
             in 0.3F..3.0F     -> {
