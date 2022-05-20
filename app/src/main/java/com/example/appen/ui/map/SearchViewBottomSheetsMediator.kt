@@ -1,9 +1,10 @@
-package com.example.appen
+package com.example.appen.ui.map
 
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Parcelable
+import com.example.appen.BuildConfig
 import com.mapbox.android.core.location.LocationEngineCallback
 import com.mapbox.android.core.location.LocationEngineResult
 import com.mapbox.android.core.permissions.PermissionsManager
@@ -20,6 +21,8 @@ import java.util.LinkedList
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
+ * OBS OBS
+ * Dette er en innhentet metode fra mapbox biblioteket
  * Sample implementation of search cards navigation and coordination.
  */
 class SearchViewBottomSheetsMediator(
@@ -115,7 +118,9 @@ class SearchViewBottomSheetsMediator(
     }
 
     fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        val savedStack = savedInstanceState.getParcelableArrayList<Transaction>(KEY_STATE_EXTERNAL_BACK_STACK) ?: return
+        val savedStack = savedInstanceState.getParcelableArrayList<Transaction>(
+            KEY_STATE_EXTERNAL_BACK_STACK
+        ) ?: return
         screensStack.clear()
         screensStack.addAll(savedStack)
         applyTopState()

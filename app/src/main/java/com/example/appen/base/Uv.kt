@@ -1,3 +1,5 @@
+package com.example.appen.base
+
 data class Uv(
     val geometry: Geometry,
     val properties: Properties,

@@ -1,11 +1,7 @@
-package com.example.appen.ui.Map
+package com.example.appen.ui.map
 
-//
-import Pos
-import Uv
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
+import com.example.appen.base.Pos
+import com.example.appen.base.Uv
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -18,29 +14,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
 import com.example.appen.MainActivity
 import com.example.appen.R
 import com.example.appen.databinding.FragmentMapBinding
-import com.mapbox.android.core.location.LocationEngineProvider
 import com.mapbox.android.gestures.MoveGestureDetector
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.Point.fromLngLat
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.mapbox.maps.*
 import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
 import com.mapbox.maps.extension.style.image.image
@@ -63,11 +51,8 @@ import com.mapbox.search.ui.view.category.SearchCategoriesBottomSheetView
 import com.mapbox.search.ui.view.feedback.SearchFeedbackBottomSheetView
 import com.mapbox.search.ui.view.place.SearchPlaceBottomSheetView
 import java.lang.ref.WeakReference
-import com.example.appen.SearchViewBottomSheetsMediator
-import com.example.appen.ViewModelMet
-import com.example.appen.databinding.ItemCalloutViewBinding
-import com.google.android.gms.maps.MapsInitializer.initialize
-import com.mapbox.mapboxsdk.utils.BitmapUtils
+import com.example.appen.base.ViewModelMet
+import com.example.appen.databinding.MapPopupViewBinding
 import com.mapbox.maps.extension.style.sources.generated.GeoJsonSource
 import com.mapbox.maps.extension.style.sources.getSourceAs
 import com.mapbox.maps.plugin.gestures.OnMapClickListener
@@ -80,44 +65,42 @@ import java.util.*
 
 
 class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
-
+    //Binding
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
+
+    //kommuniserer med ViewModelMet for UV
     private val viewModelMet: ViewModelMet by viewModels()
-    var uvTime: Float = 0.0F
-
     //To UV-pointer
-    lateinit var main:LifecycleOwner
-    //
+    private lateinit var main:LifecycleOwner
+    private var uvTime: Float = 0.0F
 
-    lateinit var mainView: View
-    var mapOpened: Boolean = false
     //Mapbox
         //User location
     private lateinit var mapboxMap: MapboxMap
     private lateinit var mapView: MapView
     private lateinit var locationPermissionHelper: LocationPermissionHelper
-
+    //Søkefunksjoner og undermeny
     private lateinit var searchBottomSheetView: SearchBottomSheetView
     private lateinit var searchPlaceView: SearchPlaceBottomSheetView
     private lateinit var searchCategoriesView: SearchCategoriesBottomSheetView
     private lateinit var feedbackBottomSheetView: SearchFeedbackBottomSheetView
-
+    //undermeny og mapbox klasser
     private lateinit var cardsMediator: SearchViewBottomSheetsMediator
-
+    //com.example.appen.base.Uv markør på kartet
     private lateinit var viewAnnotationManager: ViewAnnotationManager
-
     private var markerCoordinates = mutableListOf<Point>()
 
+
+    //Listeners for endringer i posisjon
     private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
     }
-
     private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
         mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
         mapView.gestures.focalPoint = mapView.getMapboxMap().pixelForCoordinate(it)
     }
-
+    //Noe tomt her ettersom det ikke trengs / brukes
     private val onMoveListener = object : OnMoveListener {
         override fun onMoveBegin(detector: MoveGestureDetector) {
             onCameraTrackingDismissed()
@@ -125,28 +108,12 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         override fun onMove(detector: MoveGestureDetector): Boolean {
             return false
         }
-
-        override fun onMoveEnd(detector: MoveGestureDetector) {}
-    }
-    //MapBox -Search-test
-    private lateinit var reverseGeocoding: ReverseGeocodingSearchEngine
-    private lateinit var searchRequestTask: SearchRequestTask
-
-    private val searchCallback = object : SearchCallback {
-
-        override fun onResults(results: List<SearchResult>, responseInfo: ResponseInfo) {
-            if (results.isEmpty()) {
-                Log.i("SearchApiExample", "No reverse geocoding results")
-            } else {
-                Log.i("SearchApiExample", "Reverse geocoding results: $results")
-            }
-        }
-
-        override fun onError(e: Exception) {
-            Log.i("SearchApiExample", "Reverse geocoding error", e)
+        override fun onMoveEnd(detector: MoveGestureDetector) {
         }
     }
 
+
+    //Første åpning og bygging av kartet
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -154,29 +121,22 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
     ): View {
         Mapbox.getInstance(this.requireContext(), "pk.eyJ1IjoiaW4yMDAwdGVhbTEiLCJhIjoiY2wwdHczdTMyMHB1NTNjbm1hYm93cWM3byJ9.KO3KIArfPC0qscDIi3ik7Q")
 
-        val dashboardViewModel =
-            ViewModelProvider(this).get(MapViewModel::class.java)
-
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        //OnMapClick
-        //add a blue marker view to a drawable then
+
         viewAnnotationManager = binding.mapView.viewAnnotationManager
-        //OnMapClick
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        //pekere til mapview
         mapView = binding.mapView
-        mapView?.getMapboxMap()?.loadStyleUri(Style.MAPBOX_STREETS)
+        //Oppsett av kartview
+        mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS)
 
-
+        //Legger på listener for maptrykk
         mapboxMap = binding.mapView.getMapboxMap().apply {
             addOnMapClickListener(this@MapFragment)
         }
-
+        //Gjør klart kartstilen med pins/image/symboler
         mapboxMap.loadStyle(
             style(styleUri = getMapStyleUri()) {
                 +geoJsonSource(SEARCH_PIN_SOURCE_ID) {
@@ -197,49 +157,53 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
                 }
             }
         )
-
-
+        //Bygging vil ikke skje før permissions er gitt...
         mapView
+        //Hjelpeklasse for permissions. Blir spurt om permission allerede på hjemskjerm
+        //Se egen fil i samme mappe for hjelpeklassen
         locationPermissionHelper = LocationPermissionHelper(WeakReference(activity))
         locationPermissionHelper.checkPermissions {
             onMapReady()
         }
-
         return root
     }
 
+    //Kjøres etter onCreateView / gjennoppbyggning og savedinstance før Viewets savedstate
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         main = (activity as MainActivity?)!!
 
+        //initsialiserer elementer for undermeny/søkefunksjon
+        //Søkefunksjon
         searchBottomSheetView = binding.searchView
         searchBottomSheetView.initializeSearch(savedInstanceState, SearchBottomSheetView.Configuration())
-
+        //Søke på et bestemt sted
         searchPlaceView = binding.searchPlaceView.apply {
-            initialize(CommonSearchViewConfiguration(DistanceUnitType.IMPERIAL))
-
+            initialize(CommonSearchViewConfiguration(DistanceUnitType.METRIC))
             isNavigateButtonVisible = false
             isShareButtonVisible = false
             isFavoriteButtonVisible = false
         }
-
+        //Kategorisøk "trykke på kategoriknapp"
         searchCategoriesView = binding.searchCategoriesView
         searchCategoriesView.initialize(CommonSearchViewConfiguration(DistanceUnitType.IMPERIAL))
-
+        //feedback på søk
         feedbackBottomSheetView = binding.searchFeedbackView
         feedbackBottomSheetView.initialize(savedInstanceState)
-
+        //Undermeny og elementene
         cardsMediator = SearchViewBottomSheetsMediator(
             searchBottomSheetView,
             searchPlaceView,
             searchCategoriesView,
             feedbackBottomSheetView,
         )
-
+        //Dersom noen variabler finnes i saveisntance. (tidligere søk osv)
+        //...settes de inn her
         savedInstanceState?.let {
             cardsMediator.onRestoreInstanceState(it)
         }
 
+        //Listener for aktivitet/trykk på undermenyen
         cardsMediator.addSearchBottomSheetsEventsListener(object :
             SearchViewBottomSheetsMediator.SearchBottomSheetsEventsListener {
             override fun onOpenPlaceBottomSheet(place: SearchPlace) {
@@ -252,7 +216,7 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
                 clearMarkers()
             }
         })
-
+        //Listener for kategori valg/søk/klikk
         searchCategoriesView.addCategoryLoadingStateListener(object :
             SearchCategoriesBottomSheetView.CategoryLoadingStateListener {
             override fun onLoadingStart(category: Category) {}
@@ -269,65 +233,30 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         })
 
     }
-    //Endringer herfra - Med OnMapClick
-
-
+    //Selve oppbygging av kart / build() / Starter Listeners
     private fun onMapReady() {
         mapView.getMapboxMap().setCamera(
             CameraOptions.Builder()
-                .zoom(14.0)
+                .zoom(15.0)
                 .build()
         )
         mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
-            Log.d(null,"Før locationComp og GestureListener")
+            Log.d("Test Map onMapReady()","Før locationComp og GestureListener")
             initLocationComponent()
             setupGesturesListener()
-            Log.d(null,"LocationCompListener og CameraGestureListener kjører")
-        }
-
-    }
-    /*
-    override fun onBackPressed() {
-        if (!cardsMediator.handleOnBackPressed()) {
-            super.onBackPressed()
+            Log.d("Test Map OnMapReady()","LocationCompListener og CameraGestureListener kjører")
         }
     }
 
-     */
-
-
-
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop()
-    }
-
+    //savedInstance for lagring av tidligere søk
     override fun onSaveInstanceState(outState: Bundle) {
         cardsMediator.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 
-    /*
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView.onLowMemory()
-    }
-
-     */
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mapView.onDestroy()
-    }
-
+   //Ser etter darkmode og følger systemet
     private fun getMapStyleUri(): String {
-        val darkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return when (darkMode) {
+       return when (val darkMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_YES -> Style.DARK
             Configuration.UI_MODE_NIGHT_NO,
             Configuration.UI_MODE_NIGHT_UNDEFINED -> Style.MAPBOX_STREETS
@@ -335,6 +264,8 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         }
     }
 
+    //Funksjoner som viser pins/markører
+    //Viser pin på koordinater/listede punkter
     private fun showMarkers(coordinates: List<Point>) {
         if (coordinates.isEmpty()) {
             clearMarkers()
@@ -355,7 +286,6 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
 
         showMarkers(cameraOptions, coordinates)
     }
-
     private fun showMarker(coordinate: Point) {
         val cameraOptions = CameraOptions.Builder()
             .center(coordinate)
@@ -364,7 +294,6 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
 
         showMarkers(cameraOptions, listOf(coordinate))
     }
-
     private fun showMarkers(cameraOptions: CameraOptions, coordinates: List<Point>) {
         markerCoordinates.clear()
         markerCoordinates.addAll(coordinates)
@@ -372,12 +301,10 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
 
         mapboxMap.setCamera(cameraOptions)
     }
-
     private fun clearMarkers() {
         markerCoordinates.clear()
         updateMarkersOnMap()
     }
-
     private fun updateMarkersOnMap() {
         mapboxMap.getStyle()?.getSourceAs<GeoJsonSource>(SEARCH_PIN_SOURCE_ID)?.featureCollection(
             FeatureCollection.fromFeatures(
@@ -388,19 +315,20 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         )
     }
 
+    //setter opp onMoveListener på mapviewet
     private fun setupGesturesListener() {
         mapView.gestures.addOnMoveListener(onMoveListener)
     }
 
+    //Map posisjon / viser posisjon / følger nåværende posisjon
     private fun initLocationComponent() {
         mapView.location
         val locationComponentPlugin = mapView.location
-        Log.d(null,"Hentet location")
+        Log.d("Test Map initLocationComponent() Lokasjon","Hentet location med LocComp")
         locationComponentPlugin.updateSettings {
             this.enabled = true
+            //puck som viser "bruker" på kartet
             LocationPuck2D(
-                //getApplicationContext()
-                //requireContext()
                 topImage = AppCompatResources.getDrawable(
                     requireContext(),
                     com.mapbox.maps.plugin.locationcomponent.R.drawable.mapbox_user_icon
@@ -425,15 +353,17 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
                         literal(1.0)
                     }
                 }.toJson()
-            )//.also { this.locationPuck = it }
+            )
         }
-        Log.d(null,"Location Component listeners")
+        //Logs for kartoppbygning
+        Log.d("Test Map initLocationComponent()","Location Component listeners:")
         locationComponentPlugin.addOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
         locationComponentPlugin.addOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-        Log.d(null,"Location Component Ferdig")
-        Log.d(null,"...\nKart location ferdig \n...")
+        Log.d("Test Map initLocationComponent()","Location Component Ferdig")
+        Log.d("Test Map initLocationComponent()","...\nKart location ferdig \n...")
     }
 
+    //Listener for CameraTrack som skrur av tracking Listeners
     private fun onCameraTrackingDismissed() {
         Toast.makeText(activity, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
         mapView.location
@@ -443,6 +373,7 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         mapView.gestures.removeOnMoveListener(onMoveListener)
     }
 
+    //PermissionRequest
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -450,38 +381,6 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         locationPermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-    /*
-    override fun onStart() {
-        super.onStart()
-        mapView?.onStart()
-        Log.d(null,"...\nStarter Kart\n...")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mapView?.onStop()
-    }
-
-     */
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        mapView?.onLowMemory()
-        Log.d(null,"Low memory")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        mapView?.onDestroy()
-        mapView.location
-            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
-        mapView.location
-            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
-        mapView.gestures.removeOnMoveListener(onMoveListener)
-        Log.d(null,"... Destroy kart")
-
     }
 
     private companion object {
@@ -495,12 +394,6 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
                 EdgeInsets(mapPadding, mapPadding, mapPadding, mapPadding)
             }
 
-        const val PERMISSIONS_REQUEST_LOCATION = 0
-
-        fun Context.isPermissionGranted(permission: String): Boolean {
-            return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-        }
-
         fun createSearchPinDrawable(): ShapeDrawable {
             val size = dpToPx(24)
             val drawable = ShapeDrawable(OvalShape())
@@ -513,58 +406,84 @@ class MapFragment : Fragment(), OnMapClickListener{ //OnMapReadyCallback
         fun dpToPx(dp: Int): Int {
             return (dp * Resources.getSystem().displayMetrics.density).toInt()
         }
-        //MapClick
-        const val SELECTED_ADD_COEF_PX = 25
-        const val STARTUP_TEXT = "Click on a map to add a view annotation."
     }
-
+    //Når bruker trykker på kart kalles addViewAnnotation
     override fun onMapClick(point: Point): Boolean {
         addViewAnnotation(point)
         return true
     }
-    lateinit var tvText:TextView
+    private lateinit var tvText:TextView
+    //Legger til markør og viser UV på et gitt punkt
     private fun addViewAnnotation(point: Point) {
         val viewAnnotation = viewAnnotationManager.addViewAnnotation(
-            resId = R.layout.item_callout_view,
+            resId = R.layout.map_popup_view,
             options = viewAnnotationOptions {
                 geometry(point)
                 allowOverlap(true)
             }
         )
-        ItemCalloutViewBinding.bind(viewAnnotation).apply {
+        MapPopupViewBinding.bind(viewAnnotation).apply {
 
-            var position = Pos(point.altitude().toInt(),point.latitude().toFloat(), point.longitude().toFloat())
+            val position = Pos(point.altitude().toInt(),point.latitude().toFloat(), point.longitude().toFloat())
             viewModelMet.updatePositionMet(position)
             viewModelMet.getUvPaaSted().observe(main) {
                 updateUi(it)
             }
-
-
             tvText = textNativeView
-
             closeNativeView.setOnClickListener {
                 viewAnnotationManager.removeViewAnnotation(viewAnnotation)
             }
 
         }
     }
-    fun updateUi (innUv : Uv){
+
+    //Oppdatering av UV/UV textview
+    private fun updateUi (innUv : Uv){
         val simpleDateFormat = SimpleDateFormat("HH")
         val currentDateAndTime: String = simpleDateFormat.format(Date())
-
-        //val tv = simple.findViewById<TextView>(R.id.tvSimple)
-        val tv = R.layout.item_callout_view
 
         for (i in innUv.properties.timeseries){
             val time = i.time.split("T")
             val clock = time[1].split(":")
             val hour = clock[0]
             if (hour.toInt() == currentDateAndTime.toInt() ){
-                //Log.d("Uv for nå", i.toString())
+                Log.d("Test Map updateUi() Uv", i.toString())
                 uvTime = i.data.instant.details.ultraviolet_index_clear_sky.toFloat()
                 tvText.text = uvTime.toString()
                 break
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+        Log.d("Memory","Low memory")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        mapView.onDestroy()
+        mapView.location
+            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        mapView.location
+            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        mapView.gestures.removeOnMoveListener(onMoveListener)
+        Log.d("Test Map onDestroyView()","... Destroy kart")
+
     }
 }

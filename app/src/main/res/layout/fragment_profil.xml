@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.User.UserFragment"
+    tools:context=".ui.user.UserFragment"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     >
@@ -20,7 +19,8 @@
             android:id="@+id/profilImageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_account_circle_100" />
+            android:src="@drawable/ic_baseline_account_circle_100"
+            android:contentDescription="@string/todo" />
 
         <TextView
             android:id="@+id/profilTvOverspinner"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:text="TextView"
+            android:text=""
             android:textAlignment="center"
             android:textSize="18sp" />
 
@@ -43,14 +43,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="140dp"
                 android:textStyle="bold"
-                android:text="UV sensitiv"
+                android:text="@string/uv_sensitiv"
                 android:textSize="14sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:text="UV resistent"
+                android:text="@string/uv_resistent"
                 android:textSize="14sp"/>
 
         </LinearLayout>
@@ -63,7 +63,6 @@
             android:layout_marginBottom="10dp"
             android:max="5"
             android:progress="0"
-            android:tooltipText="Hvor lett blir du solbrent?"
             />
 
         <ImageView
@@ -71,14 +70,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="center"
-            android:src="@drawable/fitzscale__2_" />
+            android:src="@drawable/fitzscale__2_"
+            android:contentDescription="@string/todo" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:fontFamily="@font/poppins_regular"
-            android:text="Jeg befinner meg i omgivelser preget av: "
+            android:text="@string/jeg_befinner_meg_i_omgivelser_preget_av"
             android:textSize="16sp" />
 
 
@@ -94,7 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
-                android:text="Vann, Snø, eller Sand"
+                android:text="@string/vann_sn_eller_sand"
                 android:textSize="16sp" />
 
             <CheckBox
@@ -102,8 +102,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:textOff="Snø, Sand eller Vann"
-                android:textOn="Snø" />
+                android:textOff="@string/sn_sand_eller_vann"
+                android:textOn="@string/sn" />
 
 
         </LinearLayout>
@@ -120,7 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
-                android:text="Mange høydemeter"
+                android:text="@string/mange_h_ydemeter"
                 android:textSize="16sp" />
 
             <CheckBox
@@ -128,8 +128,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_margin="5dp"
-                android:textOff="Snø, Sand eller Vann"
-                android:textOn="Snø" />
+                android:textOff="@string/sn_sand_eller_vann"
+                android:textOn="@string/sn" />
 
         </LinearLayout>
 
@@ -138,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:hint="Psst! Husk å lagre!"
+            android:hint="@string/psst_husk_lagre"
             android:textAlignment="center"
             android:textSize="15sp"
             android:textStyle="italic" />
@@ -148,7 +148,7 @@
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
-            android:text="Lagre"
+            android:text="@string/lagre"
             android:textStyle="bold"
             android:textSize="30sp"/>
 

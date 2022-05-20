@@ -1,4 +1,5 @@
 <resources>
+    //App Strings
     <string name="app_name">UViten</string>
     <string name="title_home">Hjem</string>
     <string name="title_map">Kart</string>
@@ -13,8 +14,6 @@
     //Timer description
     <string name="description">Start nedtellingen etter du har smørt deg, slik at du vet når du må smøre deg neste gang! Husk at du må smøre deg tidligere dersom du feks. svetter eller bader. </string>
 
-
-
     //icons
     <string name="glasses">Beskytt øynene dine</string>
     <string name="sunscreen">Bruk solkrem</string>
@@ -22,27 +21,6 @@
     <string name="clothes">Beskytt kroppen din med klær</string>
     <string name="shade">Hold deg i skyggen</string>
     <string name="imgview">imgView</string>
-
-    <string-array name="spinner_profil">
-        <item>Velg Aktivitet</item>
-        <item>Stranda</item>
-        <item>Fjelltur</item>
-        <item>Bytur</item>
-        <item>Parken</item>
-    </string-array>
-
-    <string-array name="visstedusvar">
-        <item>solbrentParasoll</item>
-        <item>solVindu</item>
-        <item>hudFaktor</item>
-        <item>solskade</item>
-        <item>hudkreft</item>
-        <item>hudkreftNorge</item>
-        <item>dVitamin</item>
-        <item>solkremVinter</item>
-        <item>solkremVoksen</item>
-        <item>solbeskyttelse</item>
-    </string-array>
 
     //visste du svar
     <string name="solbrentParasoll">..du kan bli solbrent under en parasoll?</string>
@@ -75,6 +53,28 @@
     <string name="solkremVoksen">..En voksen person bør bruke en håndfull solkrem til ansikt og kropp?</string>
     <string name="solkremVoksenUndertekst">De aller fleste smører seg inn med for lite solkrem. Til èn smøring av hele kroppen anbefales det én håndfull, det vil si ca. 30 – 40 ml.</string>
 
-
+    //Profil Strings hardkodet
+    <string name="ProfilOverskrift">Juster informasjonen så den passer deg!</string>
+    <string name="visste_du_at">Visste du at?</string>
+    <string name="fremover_p_info">fremover på info</string>
+    <string name="bakover_p_info">bakover på info</string>
+    <string name="textview">TextView</string>
+    <string name="_10_tips">10 Tips</string>
+    <string name="hudkreftknapp">Hudkreft</string>
+    <string name="uv_fakta">UV fakta</string>
+    <string name="todo">TODO</string>
+    <string name="uv_sensitiv">UV sensitiv</string>
+    <string name="uv_resistent">UV resistent</string>
+    <string name="jeg_befinner_meg_i_omgivelser_preget_av">Jeg befinner meg i omgivelser preget av:</string>
+    <string name="vann_sn_eller_sand">Vann, Snø, eller Sand</string>
+    <string name="sn_sand_eller_vann">Snø, Sand eller Vann</string>
+    <string name="mange_h_ydemeter">Mange høydemeter</string>
+    <string name="sn">Snø</string>
+    <string name="psst_husk_lagre">Psst! Husk å lagre!</string>
+    <string name="lagre">Lagre</string>
+    <string name="TomSpfAnbefaling">--</string>
+    <string name="spf">Spf</string>
+    <string name="uvSolVarsel">UV:</string>
+    <string name="temp">Temp:</string>
 
 </resources>

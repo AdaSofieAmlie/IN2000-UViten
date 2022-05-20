@@ -1,10 +1,10 @@
-package com.example.appen.ui.Home
+package com.example.appen.ui.home
 
 import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.CountDownTimer
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -15,28 +15,39 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
+//Timer klasse
+//Nedtelling som gir notifikasjon
+//fungerer også når appen er lukket
+//Mange depricatede funksjoner og klasser
 class Timer (advancedIn : View) {
-    lateinit var tvTimer : TextView
-    lateinit var progress : MaterialProgressBar
+    //TV for forklaring på timer
+    private lateinit var tvTimer : TextView
+
+    //Sirkulær Progressbar
     //Material ProgressBar: https://github.com/zhanghai/MaterialProgressBar
-    val  buttonStart : Button = advancedIn.findViewById(R.id.buttonStart)
+    private lateinit var progress : MaterialProgressBar
+
+    //knapper for timer
+    private val  buttonStart : Button = advancedIn.findViewById(R.id.buttonStart)
     val buttonPause : Button = advancedIn.findViewById(R.id.buttonPause)
     val buttonStop : Button = advancedIn.findViewById(R.id.buttonStop)
     val tvTimerExpired : TextView = advancedIn.findViewById(R.id.tvTimerExpired)
 
-    lateinit var timer : CountDownTimer
+    //Timer innstillinger og defaults
+    private lateinit var timer : CountDownTimer
     private var timerLengthInSeconds = 0L
-    var timeState : TimeState = TimeState.stopped
+    var timeState : TimeState = TimeState.Stopped
     private var secondsRemaining = 0L
     private var wakeUpTime : Long = 0L
 
     val advanced = advancedIn
 
+    //States for timer
     enum class TimeState{
-        stopped, paused, running
+        Stopped, Paused, Running
     }
 
+    //Companion object for alarm/lyd på timer
     companion object{
         val nowSeconds:Long
             get() {
@@ -54,7 +65,7 @@ class Timer (advancedIn : View) {
             val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
 
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime, pendingIntent)
-            sharedPreferences.setAlarmSetTime(nowSeconds, context)
+            SharedPreferences.setAlarmSetTime(nowSeconds, context)
 
             return wakeUpTime
         }
@@ -64,146 +75,150 @@ class Timer (advancedIn : View) {
             val intent = Intent(context, TimerExpired::class.java)
             val pendingInten = PendingIntent.getBroadcast(context, 0, intent, 0)
             alarmManager.cancel(pendingInten)
-            sharedPreferences.setAlarmSetTime(0, context)
-            sharedPreferences.setTimerLengthSecondsRemaining(0, context)
+            SharedPreferences.setAlarmSetTime(0, context)
+            SharedPreferences.setTimerLengthSecondsRemaining(0, context)
         }
 
     }
 
+    //Selve byggingen av timer
     fun settUpTimer(tid : Long) : Timer{
         tvTimer = advanced.findViewById(R.id.tvDigitalTime)
         progress = advanced.findViewById(R.id.progress_circular)
         progress.visibility = View.VISIBLE
-        sharedPreferences.setTimerLengthSeconds(tid, advanced.context)
+        SharedPreferences.setTimerLengthSeconds(tid, advanced.context)
         timerLengthInSeconds = tid
+        //Oppdaterer knappene så det stemmer med timeren
         updateButtons()
-
-        val savedTime = sharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
-        Log.d("SavedTime", savedTime.toString())
+        //Sjekker tid igjen og setter den til gjennstående tid eller til 00.00.00
+        val savedTime = SharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
+        Log.d("Test Timer settUpTimer() lagretTid", savedTime.toString())
         if ( savedTime == 0L){
-            timeState = TimeState.stopped
-            sharedPreferences.setTimerLengthSecondsRemaining(timerLengthInSeconds, advanced.context)
+            timeState = TimeState.Stopped
+            SharedPreferences.setTimerLengthSecondsRemaining(timerLengthInSeconds, advanced.context)
         } else {
             secondsRemaining = savedTime
-            timeState = sharedPreferences.getTimeState(advanced.context)
-            sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
-            Log.d("s", secondsRemaining.toString())
+            timeState = SharedPreferences.getTimeState(advanced.context)
+            SharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+            Log.d("Test Timer settUpTimer() lagretTidIgjen", secondsRemaining.toString())
         }
-
-        sharedPreferences.setTimeState(timeState, advanced.context)
+        //Lagrer TimeState i SharedPreferences
+        SharedPreferences.setTimeState(timeState, advanced.context)
         progress.max = timerLengthInSeconds.toInt()
 
+        //Setter på ClickListeners for Start/Pause/Stop
         buttonStart.setOnClickListener{
             buttonStop.text = "STOP"
             startTimer()
-            timeState = TimeState.running
-            sharedPreferences.setTimeState(timeState, advanced.context)
+            timeState = TimeState.Running
+            SharedPreferences.setTimeState(timeState, advanced.context)
             updateButtons()
             tvTimerExpired.text = ""
         }
-
         buttonPause.setOnClickListener{
             pauseTimer()
-            timeState = TimeState.paused
+            timeState = TimeState.Paused
             updateButtons()
             tvTimerExpired.text = ""
         }
-
         buttonStop.setOnClickListener{
             stopTimer()
-            timeState = TimeState.stopped
+            timeState = TimeState.Stopped
             updateButtons()
             updateTimerUI()
             tvTimerExpired.text = ""
         }
-
+        //oppdaterer UI for bruker etter oppsett
         updateTimerUI()
-
         return this
     }
 
+    //initsialisering av timer / henter timestate fra sharedpreferences
     fun initTimer(){
-        timeState = sharedPreferences.getTimeState(advanced.context)
+        timeState = SharedPreferences.getTimeState(advanced.context)
         Notification.hideTimerNotification(advanced.context)
 
-        if (timeState == TimeState.stopped){
+        if (timeState == TimeState.Stopped){
             setNewTimerLength()
         } else {
-            setPrviousTimerLength()
+            setPreviousTimerLength()
         }
 
-        if (timeState == TimeState.running || timeState == TimeState.paused) {
-            secondsRemaining = sharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
+        secondsRemaining = if (timeState == TimeState.Running || timeState == TimeState.Paused) {
+            SharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
         } else {
-            secondsRemaining = sharedPreferences.getTimerLengthSeconds(advanced.context) }
+            SharedPreferences.getTimerLengthSeconds(advanced.context)
+        }
 
-        val alarmSetTime = sharedPreferences.getAlarmSetTime(advanced.context)
+        val alarmSetTime = SharedPreferences.getAlarmSetTime(advanced.context)
         removeAlarm(advanced.context)
 
         if (alarmSetTime > 0){
             val minus = (nowSeconds - alarmSetTime ) / 1000
             secondsRemaining -= minus
         } else {
-            if (wakeUpTime != 0L && timeState == TimeState.stopped){
+            if (wakeUpTime != 0L && timeState == TimeState.Stopped){
                 convertToTime(wakeUpTime)
             }
 
         }
-        Log.d("Tid", secondsRemaining.toString())
-
+        Log.d("Test Timer initTimer() tid", secondsRemaining.toString())
+        //Dersom det er tid igjen i nedtellingen fortsettere den
         if (secondsRemaining <= 0){
             timer.cancel()
-        } else if (timeState == TimeState.running){
+        } else if (timeState == TimeState.Running){
             startTimer()
         }
+        //oppdaterer UI for bruker
         updateButtons()
         updateTimerUI()
-        sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+        SharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
     }
 
-    fun convertToTime(time : Long){
+    private fun convertToTime(time : Long){
         val dateFormat: DateFormat = SimpleDateFormat("HH:mm")
         val dateWhenTheTimerExpired = Date(time)
-        Log.d("DATE", dateWhenTheTimerExpired.toString())
+        Log.d("Test Timer convertToTime() tidUtgaatt", dateWhenTheTimerExpired.toString())
         var stringTimerExpired = "Nedtellingen gikk ut kl: "
         stringTimerExpired += dateFormat.format(dateWhenTheTimerExpired)
         stringTimerExpired += ". Husk å smøre deg på nytt! ;)"
 
         tvTimerExpired.text = stringTimerExpired
-
     }
 
-    fun setNewTimerLength(){
-        val lengthInMinutes = sharedPreferences.getTimerLengthSeconds(advanced.context)
+    //Setter nåværende timer / nye timer i fokus lengde
+    private fun setNewTimerLength(){
+        val lengthInMinutes = SharedPreferences.getTimerLengthSeconds(advanced.context)
         progress.max = lengthInMinutes.toInt()
         settUpTimer(lengthInMinutes)
     }
-
-    fun setPrviousTimerLength(){
-        secondsRemaining = sharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
-        progress.max = sharedPreferences.getTimerLengthSeconds(advanced.context).toInt()
+    //Setter forrige / tid som er igjen
+    private fun setPreviousTimerLength(){
+        secondsRemaining = SharedPreferences.getTimerLengthSecondsRemaining(advanced.context)
+        progress.max = SharedPreferences.getTimerLengthSeconds(advanced.context).toInt()
     }
 
-    fun startTimer(){
+    //Starter timer-objektet og lagrer Timestate i Sharedpreferences
+    private fun startTimer(){
         val date = Date()
         Notification.hideTimerNotification(advanced.context)
-        Log.d("Sec", secondsRemaining.toString())
-        progress.max = sharedPreferences.getTimerLengthSeconds(advanced.context).toInt()
+        Log.d("Test Timer startTimer() tidSekunderIgjen", secondsRemaining.toString())
+        progress.max = SharedPreferences.getTimerLengthSeconds(advanced.context).toInt()
 
         if (secondsRemaining == 0L){
-            secondsRemaining = sharedPreferences.getTimerLengthSeconds(advanced.context)
-            Log.d("Sec", secondsRemaining.toString())
+            secondsRemaining = SharedPreferences.getTimerLengthSeconds(advanced.context)
+            Log.d("Test Timer startTimer() tidSekunderIgjen", secondsRemaining.toString())
         }
 
-        timeState = TimeState.running
+        timeState = TimeState.Running
 
-        sharedPreferences.setTimeState(timeState, advanced.context)
+        SharedPreferences.setTimeState(timeState, advanced.context)
         progress.progress = secondsRemaining.toInt()
         timer = object : CountDownTimer(secondsRemaining * 1000, 1000) {
 
             override fun onTick(millisUntilFinished: Long) {
                 secondsRemaining = millisUntilFinished / 1000
-                sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+                SharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
                 updateTimerUI()
             }
 
@@ -221,42 +236,45 @@ class Timer (advancedIn : View) {
         }.start()
     }
 
-    fun pauseTimer() {
-        timeState = TimeState.paused
-        sharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
-        sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
-        sharedPreferences.setTimeState(timeState, advanced.context)
-        Log.d("pause", "P")
+    //Pauser timer lagrer TimeStates / tid igjen osv. i sharedpreferences
+    private fun pauseTimer() {
+        timeState = TimeState.Paused
+        SharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
+        SharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+        SharedPreferences.setTimeState(timeState, advanced.context)
+        Log.d("Test Timer pauseTimer() pause", "Paused timer")
         timer.cancel()
     }
 
+    //stopper timer og setter en "tom/ny" timer opp
     fun stopTimer() {
-        if (timeState != TimeState.paused){
+        if (timeState != TimeState.Paused){
             timer.cancel()
-            sharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
+            SharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
         }
 
-        timeState = TimeState.stopped
+        timeState = TimeState.Stopped
         setNewTimerLength()
 
         tvTimer.text = "0:00:00"
         progress.progress = 0
 
-        sharedPreferences.setTimeState(timeState, advanced.context)
-        sharedPreferences.setTimerLengthSecondsRemaining(timerLengthInSeconds, advanced.context)
+        SharedPreferences.setTimeState(timeState, advanced.context)
+        SharedPreferences.setTimerLengthSecondsRemaining(timerLengthInSeconds, advanced.context)
         secondsRemaining = timerLengthInSeconds
-        Log.d("timerlengthInSec", timerLengthInSeconds.toString())
+        Log.d("Test Timer stopTimer() timerISekunder", timerLengthInSeconds.toString())
 
         updateButtons()
     }
 
+    //Oppdaterer Timerens UI elementer / Progressbar / Tid TextView
     fun updateTimerUI(){
         var timeRemaining = secondsRemaining
         val hoursUntilFinished = timeRemaining/60/60
-        timeRemaining = timeRemaining - (hoursUntilFinished * 60 * 60)
+        timeRemaining -= (hoursUntilFinished * 60 * 60)
         val minutesUntilFinsished = timeRemaining /60
         val minutesStr = minutesUntilFinsished.toString()
-        timeRemaining = timeRemaining - minutesUntilFinsished * 60
+        timeRemaining -= minutesUntilFinsished * 60
         val secondsInMinutesUntilFinished = timeRemaining
         val timeStr = secondsInMinutesUntilFinished.toString()
         progress.progress = timeRemaining.toInt()
@@ -279,22 +297,22 @@ class Timer (advancedIn : View) {
             stringTimer += timeStr
         }
         tvTimer.text = stringTimer
-
     }
 
-    fun updateButtons(){
+    //Oppdaterer buttons under Timer Start/pause/stop
+    private fun updateButtons(){
         when (timeState){
-            TimeState.running -> {
+            TimeState.Running -> {
                 buttonStart.isEnabled = false
                 buttonPause.isEnabled = true
                 buttonStop.isEnabled = true
             }
-            TimeState.paused -> {
+            TimeState.Paused -> {
                 buttonStart.isEnabled = true
                 buttonPause.isEnabled = false
                 buttonStop.isEnabled = true
             }
-            TimeState.stopped -> {
+            TimeState.Stopped -> {
                 buttonStart.isEnabled = true
                 buttonPause.isEnabled = false
                 buttonStop.isEnabled = false
@@ -302,24 +320,24 @@ class Timer (advancedIn : View) {
         }
     }
 
+    //Lagrer timestate og tid igjen når fragment pauses
     fun saveOnPause(){
-        sharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
-        sharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
-        sharedPreferences.setTimeState(timeState, advanced.context)
+        SharedPreferences.setTimerLengthSeconds(timerLengthInSeconds, advanced.context)
+        SharedPreferences.setTimerLengthSecondsRemaining(secondsRemaining, advanced.context)
+        SharedPreferences.setTimeState(timeState, advanced.context)
         timer.cancel()
     }
-
+    //Starter backgroundtimer (når appen lukkes)
     fun onPauseStartBackgroundTimer() : Long {
         wakeUpTime = setAlarm(advanced.context, nowSeconds, secondsRemaining)
-        Log.d("wkae up time", wakeUpTime.toString())
+        Log.d("Test Timer onPauseStartBackgroundTimer() wakeUpTime", wakeUpTime.toString())
         return wakeUpTime
     }
 }
-
-class sharedPreferences(){
+//Sharedpreferencesclass
+class SharedPreferences{
     companion object{
-
-        const val timerLengthSecondsId = "com.example.appen.timer.timerLength"
+        private const val timerLengthSecondsId = "com.example.appen.timer.timerLength"
 
         fun getTimerLengthSeconds(context: Context): Long{
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
@@ -347,7 +365,7 @@ class sharedPreferences(){
             editor.apply()
         }
 
-        const val timerLengthSecondsRemainingId = "com.example.appen.timer.timerLengthSecondsRemaining"
+        private const val timerLengthSecondsRemainingId = "com.example.appen.timer.timerLengthSecondsRemaining"
 
         fun getTimerLengthSecondsRemaining(context: Context): Long{
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
@@ -362,10 +380,9 @@ class sharedPreferences(){
 
         private const val alarmSetTimeId = "com.example.appen.timer.backgroundTimer.alarm"
 
-        fun getAlarmSetTime (context: Context): Long{
+        fun getAlarmSetTime(context: Context): Long {
             val pref = PreferenceManager.getDefaultSharedPreferences(context)
-            val returnValue = pref.getLong(alarmSetTimeId, 0)
-            return returnValue
+            return pref.getLong(alarmSetTimeId, 0)
         }
 
         fun setAlarmSetTime(time:Long, context: Context){

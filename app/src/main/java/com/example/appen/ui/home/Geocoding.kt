@@ -1,13 +1,9 @@
-// To parse the JSON, install Klaxon and do:
-//
-//   val welcome10 = Welcome10.fromJson(jsonString)
-
-package codebeautify
+package com.example.appen.ui.home
 
 import com.beust.klaxon.*
 
 private val klaxon = Klaxon()
-
+//Geocoding
 data class Geocoding (
     val latitude: Double,
     val longitude: Double,
@@ -24,10 +20,8 @@ data class Geocoding (
     val locality: String,
     val localityInfo: LocalityInfo
 ) {
-    public fun toJson() = klaxon.toJsonString(this)
-
     companion object {
-        public fun fromJson(json: String) = klaxon.parse<Geocoding>(json)
+        fun fromJson(json: String) = klaxon.parse<Geocoding>(json)
     }
 }
 

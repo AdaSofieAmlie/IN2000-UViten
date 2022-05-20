@@ -1,9 +1,6 @@
-package com.example.appen
+package com.example.appen.base
 
-import Pos
-import Uv
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,12 +13,9 @@ import kotlinx.coroutines.launch
 class ViewModelMet: ViewModel() {
 
     private val dataSourceMet = DatasourceMet()
-
-
     private val baseUrl: String = "https://api.met.no/weatherapi/locationforecast/2.0/complete.json?"
-    var fullUrl: String = ""
-    lateinit var location: Location
-    var pos: Pos = Pos(0,59.9F,10.7F)
+    private var fullUrl: String = ""
+    private var pos: Pos = Pos(0,59.9F,10.7F)
 
     private val uvPaaSted: MutableLiveData<Uv> by lazy {
         MutableLiveData<Uv>().also {
@@ -33,6 +27,7 @@ class ViewModelMet: ViewModel() {
         return uvPaaSted
     }
 
+    //Obs!!! Denne blir kalt fra Location.kt
     fun updatePositionMet(posInn: Pos){
         pos = posInn
         loadUv()
@@ -49,7 +44,7 @@ class ViewModelMet: ViewModel() {
 
     private fun setUrl(pos: Pos) {
         fullUrl = baseUrl.plus("altitude=".plus(pos.alt.toString())).plus("&lat=").plus(pos.lat.toString()).plus("&lon=").plus(pos.lon.toString())
-        Log.d("LINK", fullUrl)
+        Log.d("Test ViewModelMet setUrl() URL", fullUrl)
     }
 
 

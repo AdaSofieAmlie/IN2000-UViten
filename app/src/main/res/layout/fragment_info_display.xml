@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Visste du at?"
+        android:text="@string/visste_du_at"
         android:textSize="50sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,8 @@
         app:layout_constraintStart_toEndOf="@+id/knappTilbake"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.619"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24"
+        android:contentDescription="@string/fremover_p_info"/>
 
     <ImageButton
         android:id="@+id/knappTilbake"
@@ -48,7 +49,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.619"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24"
+        android:contentDescription="@string/bakover_p_info"/>
 
     <TextView
         android:id="@+id/infoSvar"
@@ -56,7 +58,7 @@
         android:layout_height="wrap_content"
         android:maxWidth="360dp"
         android:maxHeight="160dp"
-        android:text="TextView"
+        android:text="@string/textview"
         android:textAlignment="center"
         android:textSize="22sp"
         android:textStyle="italic"
@@ -73,7 +75,7 @@
         android:layout_height="wrap_content"
         android:maxWidth="360dp"
         android:maxHeight="160dp"
-        android:text="TextView"
+        android:text="@string/textview"
         android:textAlignment="center"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -88,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
-        android:text="UV fakta"
+        android:text="@string/uv_fakta"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/hudKnapp"
         app:layout_constraintTop_toTopOf="parent"
@@ -98,7 +100,7 @@
         android:id="@+id/hudKnapp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hudkreft"
+        android:text="@string/hudkreftknapp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
-        android:text="10 Tips"
+        android:text="@string/_10_tips"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/hudKnapp"
         app:layout_constraintTop_toTopOf="parent"

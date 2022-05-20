@@ -19,7 +19,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,11 +27,11 @@
         </activity>
 
         <receiver
-            android:name=".ui.Home.TimerExpired"
+            android:name=".ui.home.TimerExpired"
             android:enabled="true"
             android:exported="false"/>
         <receiver
-            android:name=".ui.Home.TimeNotificationReciver"
+            android:name=".ui.home.TimeNotificationReceiver"
             android:enabled="true"
             android:exported="false" >
             <intent-filter>

@@ -1,11 +1,10 @@
-package com.example.appen.ui.Map
+package com.example.appen.ui.map
 
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
 import com.mapbox.android.core.permissions.PermissionsListener
 import com.mapbox.android.core.permissions.PermissionsManager
-import com.mapbox.base.common.logger.model.Tag
 import java.lang.ref.WeakReference
 
 
@@ -14,7 +13,7 @@ class LocationPermissionHelper(val activity: WeakReference<Activity>) {
 
     fun checkPermissions(onMapReady: () -> Unit) {
         if (PermissionsManager.areLocationPermissionsGranted(activity.get())) {
-            Log.d(null,"Location Permission Granted fra før")
+            Log.d("Test Map checkPermissions() LocHelp","Location Permission Granted Previously")
             onMapReady()
         } else {
             permissionsManager = PermissionsManager(object : PermissionsListener {
