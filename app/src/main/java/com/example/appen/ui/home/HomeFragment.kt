@@ -121,6 +121,11 @@ class HomeFragment : Fragment() {
             demoCollectionAdapter.update(it, main)
         }
     }
+
+    //Testmetode
+    fun setUvTimeTest(uv: Float) {
+        uvTime = uv
+    }
 }
 //Collection som inneholder de tre tab-fragmentsene
 class HomeCollectionAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
@@ -395,59 +400,67 @@ class SolvarselFragment(uvobjekt: Uv?) : Fragment() {
         Log.d("Test SolvarselFragment kalkuler() uvTime", uvTime.toString())
         Log.d("Test SolvarselFragment kalkuler() uvTimeKalkulert", uvTime2.toString())
 
-        anbefaling(seekBar1ValueRegning, uvTime2)
+        anbefaling(seekBar1ValueRegning, uvTime2, false)
     }
     /*
     anbefaling / algoritme for anbefaling av solkrem
     enkle whens med "in range
     */
-    private fun anbefaling(beskyttelse: Int, uvTime2: Float) {
+
+    private fun anbefaling(beskyttelse: Int, uvTime2: Float, test: Boolean): Int{
         when(uvTime2){
-            in 0.0F..0.3F     -> anbefalSpf(0)
+            in 0.0F..0.3F     -> return anbefalSpf(0, test)
             in 0.3F..3.0F     -> {
                 when(beskyttelse){
-                    in(1..2) -> anbefalSpf(30)
-                    in(3..6) -> anbefalSpf(0)
+                    in(1..2) -> return anbefalSpf(30, test)
+                    in(3..6) -> return anbefalSpf(0, test)
                 }
             }
             in 3.0F..4.0F     -> {
                 when(beskyttelse){
-                    in(1..3) -> anbefalSpf(30)
-                    in(4..6) -> anbefalSpf(0)
+                    in(1..3) -> return anbefalSpf(30, test)
+                    in(4..6) -> return anbefalSpf(0, test)
                 }
             }
             in 4.0F..6.0F    -> {
                 when(beskyttelse){
-                    1 -> anbefalSpf(50)
-                    in(2..4) -> anbefalSpf(30)
-                    in(5..6) -> anbefalSpf(0)
+                    1 -> return anbefalSpf(50, test)
+                    in(2..4) -> return anbefalSpf(30, test)
+                    in(5..6) -> return anbefalSpf(0, test)
                 }
             }
             in 6.0F..7.0F   -> {
                 when(beskyttelse){
-                    in(1..3) -> anbefalSpf(50)
-                    4 -> anbefalSpf(30)
-                    in(5..6) -> anbefalSpf(0)
+                    in(1..3) -> return anbefalSpf(50, test)
+                    4 -> return anbefalSpf(30, test)
+                    in(5..6) -> return anbefalSpf(0, test)
                 }
             }
             in 7.0F..9.0F   -> {
                 when(beskyttelse){
-                    in(1..4) -> anbefalSpf(50)
-                    5 -> anbefalSpf(30)
-                    6 -> anbefalSpf(0)
+                    in(1..4) -> return anbefalSpf(50, test)
+                    5 -> return anbefalSpf(30, test)
+                    6 -> return anbefalSpf(0, test)
                 }
             }
             in 9.0F..11.0F   -> {
                 when(beskyttelse){
-                    in(1..5) -> anbefalSpf(50)
-                    6 -> anbefalSpf(30)
+                    in(1..5) -> return anbefalSpf(50, test)
+                    6 -> return anbefalSpf(30, test)
                 }
             }
         }
+        return 0
     }
     //kontrollerer SPF text view som viser anbefalt solkrem faktor
-    private fun anbefalSpf(spf: Int){
-        anbTv.text = spf.toString()
+    fun anbefalSpf(spf: Int, test: Boolean): Int{
+        //tv.text = "Anbefaler Spf " + spf
+        if(!test) {
+            anbTv.text = spf.toString()
+            return 0
+        }
+        //Test
+        return spf
     }
 
     //Oppdaterer slik at riktige ikoner viser ut ifra nåværende UV
