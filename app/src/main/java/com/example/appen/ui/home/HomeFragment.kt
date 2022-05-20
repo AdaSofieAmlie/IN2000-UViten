@@ -44,8 +44,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
-//solvarsel fragment, flere ting skjer her, hvor det er en samling med tre fragments
-//
+// Ligger flere klasser her
+// HomeCollectionAdapter, SolvarselFragment, SmoerePaaminnelseFragment og InfoFragment
 class HomeFragment : Fragment() {
 
     //binding
@@ -92,7 +92,7 @@ class HomeFragment : Fragment() {
         viewPager.adapter = demoCollectionAdapter
         viewPager.isUserInputEnabled = false
 
-        //Definerer tabsa og setter de på
+        //Definerer tabsa og setter de
         val tabLayout = view.findViewById<TabLayout>(R.id.tab_layout)
         TabLayoutMediator(tabLayout, view.findViewById(R.id.pager)) { tab, position ->
             tab.text = "Tab ${(position + 1)}"

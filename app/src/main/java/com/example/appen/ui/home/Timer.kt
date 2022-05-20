@@ -335,6 +335,7 @@ class Timer (advancedIn : View) {
     }
 }
 //Sharedpreferencesclass
+//Deles med Notification, TimeNotificationReciever
 class SharedPreferences{
     companion object{
         private const val timerLengthSecondsId = "com.example.appen.timer.timerLength"
